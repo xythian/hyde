@@ -9,6 +9,7 @@ Hyde is a static website generator with the power of Django templates behind it.
 [1]: http://www.ringce.com/products/hyde/hyde.html
 [2]: http://www.ringce.com/blog/2009/introducing_hyde.html
 
+
 ## Basic Installation
 
 The very basic installation of hyde only needs Django and pyYAML. More python goodies are needed based on the features you may use.
@@ -18,6 +19,8 @@ The very basic installation of hyde only needs Django and pyYAML. More python go
 
 Get the hyde source by git cloning this repository.
 
+    sudo python setup.py install
+
 
 ## Running with Hyde
 
@@ -25,14 +28,15 @@ The hyde engine has three entry points:
 
 1. Initializer
 
-        python hyde.py -i -s path/to/your/site [-t template_name = default] [-f]
+        hyde.py -i -s path/to/your/site [-t template_name = default] [-f]
+        
     During initialization hyde creates a basic website by copying the specified template (or default). This template contains the skeleton site layout, some content pages and settings.py.
     
     Be careful with the -f setting, though: it will overwrite your website.
 
 2. Generator
 
-        python hyde.py -g -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy] [-k]
+        hyde.py -g -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy] [-k]
     
     This will process the content and media and copy the generated website to your deploy directory. 
 
@@ -40,7 +44,7 @@ The hyde engine has three entry points:
 
 3. Web Server
 
-        python hyde.py -w -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy]
+        hyde.py -w -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy]
     
     This will start an instance of a cherrypy server and serve the generated website at localhost:8080.
 
@@ -52,6 +56,7 @@ The hyde engine has three entry points:
 * media - Contains site media, css, js and images. 
 * settings.py - Django and hyde settings.
 
+
 ### Recommended conventions
 
 These conventions will make it easier to configure hyde plugins.
@@ -59,9 +64,11 @@ These conventions will make it easier to configure hyde plugins.
 * Prefix files in layout and other template files in content with underscores
 * Keep media folder organized by file type[css, flash, js, images].
 
+
 ## Configuring your website
 
 Most of the boilerplate configuration comes as a part of the initialized website. The only setting you _have to_ override is the SITE_NAME setting.
+
 
 ### Media Processors
 
@@ -79,9 +86,11 @@ File extensions should be specified as .css, .js, .png etc. Again no wildcard su
 
 Hyde retains the YUI Compressor, Clever CSS and HSS processors from aym-cms.
 
+
 #### Template Processor 
 
 Template processor allows the use of context variables inside your media files. 
+
 
 #### YUI Compressor
 
@@ -92,6 +101,7 @@ Runs through the all the files defined in the configuration associated with ``'h
 In the settings file, set ``YUI_COMPRESSOR`` to
 be a path to a [YUI Compressor][yuic] jar on your computer.
 
+
 #### Clever CSS Processor
 
 Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.CleverCSS'`` and converts them to css. 
@@ -100,13 +110,15 @@ You need to install Clever CSS using ``sudo easy_install CleverCSS`` command for
 
 [clever_css]: http://sandbox.pocoo.org/clevercss/
 
+
 #### HSS Processor
 
 Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.HSS'`` and converts them to css. 
 
-You need to download HSS from [the project website][hss] and set the ``HSS_PATH`` variable to the downloaded path. A version for OS X is installed in the ``lib`` folder by default. To use it, just uncomment the ``HSS_PATH`` line in the settings.py file of your template.
+You need to download HSS from [the project website][hss] and set the ``HSS_PATH`` variable to the downloaded path.
 
 [hss]: http://ncannasse.fr/projects/hss
+
 
 ### Content Processors
 
@@ -138,6 +150,7 @@ On your content pages you can define the page variables using the standard YAML 
 
 Hyde retains the markdown and syntax template tags from aym_cms. Additionally hyde introduces a few tags for excerpts. These tags are added to the Django built in tags so there is no need for the load statements.
 
+
 ### Markdown
 
 Requires markdown to be installed.
@@ -157,6 +170,7 @@ It is used as follows:
     1.  Or at least that is my opinion.
     2.  What about you?
     {% endmarkdown %}
+
 
 ### Textile
 
@@ -199,35 +213,43 @@ a code syntax highlighter. Usage is:
 They are both intended to make writing static content
 quicker and less painful.
 
+
 ### Hyde
 
 The ``{%hyde%}`` tag is used for the page variables, as a template tag all it does is swallow the contents and prevent them from showing up in the html. The even safer approach is to define this tag outside of all blocks so that it is automatically ignored.
+
 
 ### Excerpt
 
 The ``{%excerpt%}{%endexcerpt%}`` tag decorates the output with html comments that mark the excerpt area. Excerpts marked in this manner can be referenced in other pages using the ``{%render_excerpt%}`` or the ``{%latest_excerpt%}`` tag.
 
+
 ### Render Excerpt
 
 Render Excerpt takes a page variable and optional number of words argument to render the excerpt from the target page.
+
 
 ### Latest Excerpt
 
 Latest Excerpt takes a content folder path and optional number of words as input. It parses through the content pages looking for page variables named ``created`` and gets the page with the maximum value and renders the excerpt from that page.
 
+
 ### Article
 
 The ``{%article%}{%endarticle%}`` tags mark content enclosed in them to be included as inline content when the atom feed is generated.
 
+
 ### Render Article
 
 Render Article renders the html content bracketed by the `{%article%}` tag from the given page.
+
 
 ### Typogrify
 
 To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template.
 
 [typogrify_site]:http://code.google.com/p/typogrify/
+
 
 ## Base Templates
 
@@ -241,6 +263,7 @@ The default site layout contains templates for basic site structure, navigation,
 The [Ringce][ringce] website source is available as a reference implementation.
 
 [ringce]:http://github.com/lakshmivyas/ringce/tree/master
+
 
 # CONTRIBUTORS
 
