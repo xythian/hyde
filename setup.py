@@ -1,7 +1,9 @@
 from distutils.core import setup, Command
+from distutils.command.install_data import install_data
+
 from distutils.command.install import INSTALL_SCHEMES
 
-import os
+import sys, os
 
 try:
     import py
@@ -35,11 +37,32 @@ class PyTestCommand(Command):
         raise SystemExit(exitstatus)
 
 
+###########################################################
+# XXX: Bits from Django's setup.py to fix OSX craziness
+class osx_install_data(install_data):
+    # See Django setup.py for details on why this is here
+    
+    def finalize_options(self):
+        self.set_undefined_options('install', ('install_lib', 'install_dir'))
+        install_data.finalize_options(self)
+
+if sys.platform == "darwin":
+    cmdclasses = {'install_data': osx_install_data}
+else:
+    cmdclasses = {'install_data': install_data}
+
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
+# XXX: END Bits from Django's setup.py to fix OSX craziness
+###########################################################
+
+
+# Add our test command
+cmdclasses['test'] = PyTestCommand
+
 data_files = []
-for dirpath, dirnames, filenames in os.walk('hydeengine/templates'):
+for dirpath, dirnames, filenames in os.walk('hydeengine'):
     # Ignore dirnames that start with '.'
     for i, dirname in enumerate(dirnames):
         if dirname.startswith('.'): 
@@ -47,11 +70,6 @@ for dirpath, dirnames, filenames in os.walk('hydeengine/templates'):
     if filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
-#import pprint
-#pp = pprint.PrettyPrinter(indent=4)
-#pp.pprint(data_files)
-#import sys
-#sys.exit(1)
 
 setup(
     name='hyde',
@@ -61,10 +79,8 @@ setup(
     url='http://www.ringce.com/products/hyde/hyde.html',
     description='Static website generator using Django templates',
 
-    packages=['hydeengine'],
+    packages=['hydeengine', 'hydeengine/templatetags'],
     scripts=['scripts/hyde.py',],
-      data_files=data_files,
-#    package_data={'templates': ['templates/*']},
-
-    cmdclass = {'test': PyTestCommand},
+    data_files=data_files,
+    cmdclass = cmdclasses
     )
