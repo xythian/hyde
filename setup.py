@@ -6,7 +6,7 @@ setup(name='hyde',
       author_email='lakshmi.vyas@gmail.com',
       url='http://www.ringce.com/products/hyde/hyde.html',
       description='Static website generator using Django templates',
-      
+
       packages=['hydeengine'],
       scripts=['scripts/hyde.py',],
       )

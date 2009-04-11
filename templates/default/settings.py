@@ -90,20 +90,18 @@ FILTER = {
 }        
 
 
-#Processor Configuration
+# Processor Configuration
 
 # path for YUICompressor, or None if you don't
 # want to compress JS/CSS. Project homepage:
 # http://developer.yahoo.com/yui/compressor/
-YUI_COMPRESSOR = "./lib/yuicompressor-2.4.1.jar"
-#YUI_COMPRESSOR = None 
+YUI_COMPRESSOR = None 
 
-# path for HSS, which is a preprocessor for CSS-like files (*.hss)
+# Path to HSS, which is a preprocessor for CSS-like files (*.hss)
 # project page at http://ncannasse.fr/projects/hss
-#HSS_PATH = "./lib/hss-1.0-osx"
-HSS_PATH = None # if you don't want to use HSS
+HSS_PATH = None
 
-#Django settings
+# Django settings
 
 TEMPLATE_DIRS = (LAYOUT_DIR, CONTENT_DIR, TMP_DIR, MEDIA_DIR)
 
