@@ -5,10 +5,6 @@ class TestCommand(Command):
     description = 'Run package tests'
     user_options = []
     
-    def __init__(self, dist):
-        Command.__init__(self, dist)
-        self._dir = os.getcwd()
-
     def initialize_options(self):
         pass
 
