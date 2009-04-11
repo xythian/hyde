@@ -85,7 +85,7 @@ Template processor allows the use of context variables inside your media files.
 
 #### YUI Compressor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.YUICompressor'`` and compresses them. 
+Runs through the all the files defined in the configuration associated with ``'hyde.media_processors.YUICompressor'`` and compresses them. 
 
 [yuic]: http://developer.yahoo.com/yui/compressor/
 
@@ -94,7 +94,7 @@ be a path to a [YUI Compressor][yuic] jar on your computer.
 
 #### Clever CSS Processor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.CleverCSS'`` and converts them to css. 
+Runs through the all the files defined in the configuration associated with ``'hyde.media_processors.CleverCSS'`` and converts them to css. 
 
 You need to install Clever CSS using ``sudo easy_install CleverCSS`` command for this processor to work.
 
@@ -102,7 +102,7 @@ You need to install Clever CSS using ``sudo easy_install CleverCSS`` command for
 
 #### HSS Processor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.HSS'`` and converts them to css. 
+Runs through the all the files defined in the configuration associated with ``'hyde.media_processors.HSS'`` and converts them to css. 
 
 You need to download HSS from [the project website][hss] and set the ``HSS_PATH`` variable to the downloaded path. A version for OS X is installed in the ``lib`` folder by default. To use it, just uncomment the ``HSS_PATH`` line in the settings.py file of your template.
 

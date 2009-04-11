@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.template.defaultfilters import truncatewords_html
 from django.template import Library
 from django.utils.safestring import mark_safe
-from hydeengine.file_system import Folder
+from hyde.file_system import Folder
 import re
 import string
 import os

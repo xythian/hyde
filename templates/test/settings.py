@@ -53,30 +53,30 @@ APPEND_SLASH = False
 
 MEDIA_PROCESSORS = {
     '*':{
-        '.css':('hydeengine.media_processors.YUICompressor',),
-        '.ccss':('hydeengine.media_processors.CleverCSS',
-                 'hydeengine.media_processors.YUICompressor',),
-        '.hss':('hydeengine.media_processors.HSS',
-                'hydeengine.media_processors.YUICompressor',),
-        '.js':('hydeengine.media_processors.YUICompressor',)
+        '.css':('hyde.media_processors.YUICompressor',),
+        '.ccss':('hyde.media_processors.CleverCSS',
+                 'hyde.media_processors.YUICompressor',),
+        '.hss':('hyde.media_processors.HSS',
+                'hyde.media_processors.YUICompressor',),
+        '.js':('hyde.media_processors.YUICompressor',)
     } 
 }
 
 CONTENT_PROCESSORS = {
-    '*': {'.html':('hydeengine.content_processors.YAMLContentProcessor',)}
+    '*': {'.html':('hyde.content_processors.YAMLContentProcessor',)}
 }
 
 SITE_POST_PROCESSORS = {
     '/':{
-        'hydeengine.site_post_processors.UrlListGenerator' : {
+        'hyde.site_post_processors.UrlListGenerator' : {
             'url_list_file': URL_LIST_FILE
         },
-    #   'hydeengine.site_post_processors.HtaccessGenerator' : {
+    #   'hyde.site_post_processors.HtaccessGenerator' : {
     #       'template' : '_htaccess'    
     #   }
     },
     'media/js/': {
-        'hydeengine.site_post_processors.FolderFlattener' : {
+        'hyde.site_post_processors.FolderFlattener' : {
                 'remove_processed_folders': True,
                 'pattern':"*.js"
         }
@@ -108,7 +108,7 @@ HSS_PATH = "./lib/hss-1.0-osx"
 TEMPLATE_DIRS = ( LAYOUT_DIR, CONTENT_DIR, TMP_DIR)
 
 INSTALLED_APPS = (
-    'hydeengine',
+    'hyde',
     'django.contrib.webdesign',
 )
 

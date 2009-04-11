@@ -52,18 +52,18 @@ APPEND_SLASH = False
 
 MEDIA_PROCESSORS = {
     '*':{
-        '.css':('hydeengine.media_processors.TemplateProcessor',
-                'hydeengine.media_processors.YUICompressor',),
-        '.ccss':('hydeengine.media_processors.TemplateProcessor',
-                'hydeengine.media_processors.CleverCSS',
-                'hydeengine.media_processors.YUICompressor',),
+        '.css':('hyde.media_processors.TemplateProcessor',
+                'hyde.media_processors.YUICompressor',),
+        '.ccss':('hyde.media_processors.TemplateProcessor',
+                'hyde.media_processors.CleverCSS',
+                'hyde.media_processors.YUICompressor',),
         '.hss':(
-                'hydeengine.media_processors.TemplateProcessor',
-                'hydeengine.media_processors.HSS',
-                'hydeengine.media_processors.YUICompressor',),
+                'hyde.media_processors.TemplateProcessor',
+                'hyde.media_processors.HSS',
+                'hyde.media_processors.YUICompressor',),
         '.js':(
-                'hydeengine.media_processors.TemplateProcessor',
-                'hydeengine.media_processors.YUICompressor',)
+                'hyde.media_processors.TemplateProcessor',
+                'hyde.media_processors.YUICompressor',)
     } 
 }
 
@@ -71,7 +71,7 @@ CONTENT_PROCESSORS = {}
 
 SITE_POST_PROCESSORS = {
     # 'media/js': {
-    #        'hydeengine.site_post_processors.FolderFlattener' : {
+    #        'hyde.site_post_processors.FolderFlattener' : {
     #                'remove_processed_folders': True,
     #                'pattern':"*.js"
     #        }
@@ -106,6 +106,6 @@ HSS_PATH = None # if you don't want to use HSS
 TEMPLATE_DIRS = (LAYOUT_DIR, CONTENT_DIR, TMP_DIR, MEDIA_DIR)
 
 INSTALLED_APPS = (
-    'hydeengine',
+    'hyde',
     'django.contrib.webdesign',
 )

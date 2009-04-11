@@ -16,9 +16,9 @@ ROOT = os.path.abspath(TEST_ROOT + "/..")
  
 sys.path = [ROOT] + sys.path
 
-from hydeengine.file_system import File, Folder
-from hydeengine import url, Initializer, Generator, setup_env
-from hydeengine.siteinfo import SiteNode, SiteInfo, Page
+from hyde.file_system import File, Folder
+from hyde import url, Initializer, Generator, setup_env
+from hyde.siteinfo import SiteNode, SiteInfo, Page
 
 TEST_SITE = Folder(TEST_ROOT).child_folder("test_site")
         
