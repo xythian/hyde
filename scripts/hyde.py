@@ -4,11 +4,11 @@ import sys
 import threading
 
 from optparse import OptionParser
-from hydeengine import Generator, Initializer, Server
+import hydeengine
 
 #import cProfile
 
-PROG_ROOT = os.path.dirname(os.path.abspath( __file__ ))
+PROG_ROOT = hydeengine.__path__[0]
 
 def main(argv):
     
@@ -49,7 +49,7 @@ def main(argv):
         options.deploy_to = os.path.abspath(options.deploy_to)
     
     if options.init:
-        initializer = Initializer(options.site_path)
+        initializer = hydeengine.Initializer(options.site_path)
         initializer.initialize(PROG_ROOT,
                         options.template, options.force_init)
 
@@ -64,11 +64,11 @@ def main(argv):
         
 
     if options.generate:
-        generator = Generator(options.site_path)
+        generator = hydeengine.Generator(options.site_path)
         generator.generate(options.deploy_to, options.keep_watching, quit)        
 
     if options.webserve:
-        server = Server(options.site_path)
+        server = hydeengine.Server(options.site_path)
         server.serve(options.deploy_to, quit)
         
     if ((options.generate and options.keep_watching)   
