@@ -4,7 +4,7 @@ import sys
 import threading
 
 from optparse import OptionParser
-from hyde import Generator, Initializer, Server
+from hydeengine import Generator, Initializer, Server
 
 #import cProfile
 

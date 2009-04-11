@@ -24,10 +24,10 @@ ROOT = os.path.abspath(TEST_ROOT + "/..")
 
 sys.path = [ROOT] + sys.path
 
-from hyde.file_system import File, Folder
-from hyde import url, Initializer, Generator, setup_env
-from hyde.siteinfo import SiteNode, SiteInfo, Page
-from hyde.site_post_processors import FolderFlattener
+from hydeengine.file_system import File, Folder
+from hydeengine import url, Initializer, Generator, setup_env
+from hydeengine.siteinfo import SiteNode, SiteInfo, Page
+from hydeengine.site_post_processors import FolderFlattener
 
 TEST_ROOT = Folder(TEST_ROOT)
 TEST_SITE = TEST_ROOT.child_folder("test_site")
@@ -361,7 +361,7 @@ class TestYAMLProcessor(MonitorTests):
                resource = changes['resource']               
                assert resource
                assert resource.file.path == path
-               # from hyde.content_processors import YAMLContentProcessor
+               # from hydeengine.content_processors import YAMLContentProcessor
                # YAMLContentProcessor.process(resource)
                for key, value in vars.iteritems():
                    assert hasattr(resource, key)
@@ -463,7 +463,7 @@ class TestProcessing(MonitorTests):
         original_MP = settings.MEDIA_PROCESSORS
         original_site = settings.SITE_ROOT
         settings.MEDIA_PROCESSORS = {"*":{".css":
-        ('hyde.media_processors.TemplateProcessor',)}}
+        ('hydeengine.media_processors.TemplateProcessor',)}}
         settings.SITE_ROOT = "www.hyde-test.bogus/"
         self.generator = Generator(TEST_SITE.path)
         self.generator.build_siteinfo()
@@ -609,7 +609,7 @@ class TestPostProcessors:
         settings.CONTENT_PROCESSORS = {}
         settings.SITE_POST_PROCESSORS = {
             "blog" : {
-                "hyde.site_post_processors.FolderFlattener" : {
+                "hydeengine.site_post_processors.FolderFlattener" : {
                         'remove_processed_folders': True,
                         'pattern':"*.html"
                 }

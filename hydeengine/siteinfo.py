@@ -6,8 +6,8 @@ import operator
 from datetime import date, datetime, time
 from threading import Thread, Event
 
-from hyde import url
-from hyde.file_system import File, Folder
+from hydeengine import url
+from hydeengine.file_system import File, Folder
 
 class SiteResource(object):
     def __init__(self, a_file, node):

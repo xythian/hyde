@@ -4,7 +4,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from file_system import File
 from datetime import datetime
-from hyde.templatetags.hydetags import xmldatetime
+from hydeengine.templatetags.hydetags import xmldatetime
 import commands
 
 class FolderFlattener:

@@ -251,9 +251,9 @@ class Generator(object):
         settings.DEPLOY_DIR = deploy_folder.path
         if not deploy_folder.exists:
             deploy_folder.make()
-        add_to_builtins('hyde.templatetags.hydetags')
-        add_to_builtins('hyde.templatetags.aym')
-        add_to_builtins('hyde.templatetags.typogrify')
+        add_to_builtins('hydeengine.templatetags.hydetags')
+        add_to_builtins('hydeengine.templatetags.aym')
+        add_to_builtins('hydeengine.templatetags.typogrify')
         self.create_siteinfo()
     
     def create_siteinfo(self):
