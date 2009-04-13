@@ -172,11 +172,11 @@ class Server(object):
                     raise cherrypy.NotFound
         
         cherrypy.config.update({'environment': 'production',
-                                  'log.error_file': 'site.log',
-                                  'log.screen': True,
-                                  'server.socket_host': self.address,
-                                  'server.socket_port': self.port,
-                                  })
+                                'log.error_file': 'site.log',
+                                'log.screen': True,
+                                'server.socket_host': self.address,
+                                'server.socket_port': int(self.port),
+                                })
 
         # even if we're still using clean urls, we still need to serve media.
         if settings.GENERATE_CLEAN_URLS:
@@ -189,6 +189,7 @@ class Server(object):
             'tools.staticdir.dir': deploy_folder.path,
             'tools.staticdir.on':True
             }}
+
         cherrypy.tree.mount(WebRoot(), "/", conf)
         if exit_listner:
             cherrypy.engine.subscribe('exit', exit_listner)

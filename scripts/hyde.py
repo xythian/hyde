@@ -74,7 +74,7 @@ def main(argv):
         generator.generate(options.deploy_to, options.keep_watching, quit)        
 
     if options.webserve:
-        server = hydeengine.Server(options.site_path, address=options.port, port=options.port)
+        server = hydeengine.Server(options.site_path, address=options.address, port=options.port)
         server.serve(options.deploy_to, quit)
         
     if ((options.generate and options.keep_watching)   
