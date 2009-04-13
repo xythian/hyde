@@ -40,8 +40,8 @@ def main(argv):
                         dest = "port", default='8080',
                         help = "Port webserver should listen on (8080).")
     parser.add_option("-a", "--address",
-                        dest = "address", default='127.0.0.1',
-                        help = "Address webserver should listen on (127.0.0.1).")
+                        dest = "address", default='localhost',
+                        help = "Address webserver should listen on (localhost).")
                         
     (options, args) = parser.parse_args()
     
