@@ -3,6 +3,13 @@ from django.utils import safestring
 
 import hashlib
 
+try:
+    import pygments
+    from pygments import lexers
+    from pygments import formatters
+except ImportError:
+    pygments = False
+    
 register = template.Library()
 
 @register.tag(name="textile")
@@ -68,13 +75,9 @@ class SyntaxHighlightNode(template.Node):
         self.lexer = lexer
 
     def render(self, context):
-        try:
-            import pygments
-            from pygments import lexers
-            from pygments import formatters
-        except ImportError:
+        if not pygments:
             print u"Requires Pygments library to use syntax highlighting tags."
-        
+            
         output = self.nodelist.render(context)
         lexer = get_lexer(output, self.lexer)
         formatter = formatters.HtmlFormatter()
