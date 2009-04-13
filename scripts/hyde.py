@@ -36,7 +36,13 @@ def main(argv):
     parser.add_option("-w", "--webserve", action = "store_true",
                         dest = "webserve", default = False, 
                         help = "Start an instance of the CherryPy webserver.")
-
+    parser.add_option("-p", "--port",
+                        dest = "port", default='8080',
+                        help = "Port webserver should listen on (8080).")
+    parser.add_option("-a", "--address",
+                        dest = "address", default='127.0.0.1',
+                        help = "Address webserver should listen on (127.0.0.1).")
+                        
     (options, args) = parser.parse_args()
     
     if len(args):
@@ -68,7 +74,7 @@ def main(argv):
         generator.generate(options.deploy_to, options.keep_watching, quit)        
 
     if options.webserve:
-        server = hydeengine.Server(options.site_path)
+        server = hydeengine.Server(options.site_path, address=options.port, port=options.port)
         server.serve(options.deploy_to, quit)
         
     if ((options.generate and options.keep_watching)   
