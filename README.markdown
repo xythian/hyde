@@ -17,7 +17,7 @@ The very basic installation of hyde only needs Django, Markdown and pyYAML. More
     sudo easy_install pyYAML
     sudo easy_install markdown
 
-Get the hyde source by [git cloning][http://github.com/guides/home] this repository.
+Get the hyde source by [git cloning](http://github.com/guides/home) this repository.
 
 
 ## Running with Hyde
