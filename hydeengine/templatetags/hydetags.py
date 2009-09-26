@@ -16,7 +16,7 @@ from hydeengine.file_system import Folder
 
 
 marker_start = "<!-- Hyde::%s::Begin -->\n"
-marker_end = "<!-- Hyde::%s::End -->\n"
+marker_end = "<!-- Hyde::%s::End -->"
 
 register = Library()
 
@@ -158,7 +158,6 @@ def render_article(parser, token):
     path = None
     if len(tokens) > 1:
         path = parser.compile_filter(tokens[1])
-        print path
     return RenderArticleNode(path)
     
 class RenderExcerptNode(template.Node):
