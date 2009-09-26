@@ -48,7 +48,6 @@ class CategoriesManager:
         node.categories = categories
         
 class NodeInjector(object):
-        
     """
         Finds the node that represents the given path and injects it with the given     
         variable name into all the posts contained in the current node.

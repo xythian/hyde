@@ -129,34 +129,7 @@ def recent_posts(parser, token):
     if len(tokens) > 3:
         node = parser.compile_filter(tokens[3])        
     return RecentPostsNode(var, count, node)            
-            
-class PostsLoader(template.Node):
-    """
-    Loads the list posts (pages in the CONTENT_BLOG_DIR node) until reaching the nbPosts limit. 
-    By default, no limit.
-    """
-    def __init__(self, nbPosts=None):
-        self.nbPosts=nbPosts
-        
-    def render(self, context):
-        site = context['site']
-        context['posts'] = []
-        nbPosts = self.nbPosts
-        for i, post in enumerate(site.find_node(Folder(settings.BLOG_DIR)).walk_pages()):
-            if post.listing == False:
-                if nbPosts != None and i >= nbPosts:
-                    break;
-                context['posts'].append(post)
-        return ""
-            
-@register.tag(name="load_posts")
-def load_posts(parser, token):
-    tokens = token.split_contents()
-    nbPosts = None
-    if len(tokens) > 1:
-        nbPosts = Template(tokens[1])
-    return PostsLoader(nbPosts)
-        
+                    
 @register.tag(name="latest_excerpt")
 def latest_excerpt(parser, token):
     tokens = token.split_contents()
