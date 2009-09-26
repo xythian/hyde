@@ -46,8 +46,6 @@ class CategoriesManager:
                     categories[category].posts.add(post)     
         context['categories'] = categories 
         node.categories = categories
-<<<<<<< HEAD:hydeengine/site_pre_processors.py
-=======
         
 class NodeInjector(object):
         
@@ -67,4 +65,4 @@ class NodeInjector(object):
             return
         for post in node.walk_pages():
             setattr(post, varName, nodeFromPathFragment)
->>>>>>> 2f113ba202229ea31a5afbcbc4dca05001e8ade2:hydeengine/site_pre_processors.py
+
