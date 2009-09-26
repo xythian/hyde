@@ -93,13 +93,13 @@ class PostsLoader(template.Node):
         
     def render(self, context):
         site = context['site']
-        context['blog']['posts'] = []
+        context['posts'] = []
         nbPosts = self.nbPosts
         for i, post in enumerate(site.find_node(Folder(settings.BLOG_DIR)).walk_pages()):
             if post.listing == False:
                 if nbPosts != None and i >= nbPosts:
                     break;
-                context['blog']['posts'].append(post)
+                context['posts'].append(post)
         return ""
             
 @register.tag(name="load_posts")
@@ -138,6 +138,7 @@ def render_article(parser, token):
     path = None
     if len(tokens) > 1:
         path = parser.compile_filter(tokens[1])
+        print path
     return RenderArticleNode(path)
     
 class RenderExcerptNode(template.Node):
