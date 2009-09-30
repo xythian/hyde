@@ -261,3 +261,4 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [montecristo](http://github.com/montecristo)
 - [Valentin Jacquemin](http://github.com/poxd)
 - [Johannes Reinhard](http://github.com/SpeckFleck)
+- [Steve Losh](http://github.com/sjl)
