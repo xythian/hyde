@@ -42,7 +42,22 @@ class HSS:
         resource.source_file.delete()
         out_file.copy_to(resource.source_file.path)
         out_file.delete()
-        
+
+class SASS:
+    @staticmethod
+    def process(resource):
+        out_file = File(resource.source_file.path_without_extension + ".css")
+        sass = settings.SASS_PATH
+        if not sass or not os.path.exists(sass):
+            raise ValueError("SASS Processor cannot be found at [%s]" % sass)
+        print out_file
+        status, output = commands.getstatusoutput(
+        u"%s %s %s" % (sass, resource.source_file.path, out_file))
+        if status > 0: 
+            print output
+            return None
+        resource.source_file.delete()
+
 class YUICompressor:
     @staticmethod
     def process(resource):

@@ -109,6 +109,14 @@ You need to download HSS from [the project website][hss] and set the ``HSS_PATH`
 
 [hss]: http://ncannasse.fr/projects/hss
 
+#### SASS Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.SASS'`` and converts them to css. 
+
+You need to install SASS (see [the project website][sass]) and set the ``SASS_PATH`` variable to the path to the ``sass`` script.
+
+[sass]: http://sass-lang.com/
+
 ### Content Processors
 
 Content processors are run against all files in the content folder whereas the media processors are run against the media folder. No content processors have been created yet.
