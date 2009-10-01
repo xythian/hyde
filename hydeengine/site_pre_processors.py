@@ -43,10 +43,15 @@ class NodeInjector(object):
         context = settings.CONTEXT
         site = context['site']
         node = params['node']
-        varName = params['variable']
-        path = params['path']
-        nodeFromPathFragment = site.find_node(site.folder.parent.child_folder(path))
-        if not nodeFromPathFragment:
-            return
-        for post in node.walk_pages():
-            setattr(post, varName, nodeFromPathFragment)
+        try:
+            varName = params['variable']
+            path = params['path']
+            params['injections'] = { varName: path }
+        except KeyError:
+            pass
+        for varName, path in params['injections'].iteritems():
+            nodeFromPathFragment = site.find_node(site.folder.parent.child_folder(path))
+            if not nodeFromPathFragment:
+                continue
+            for post in node.walk_pages():
+                setattr(post, varName, nodeFromPathFragment)

@@ -93,8 +93,9 @@ SITE_PRE_PROCESSORS = {
     },
     '/': {
         'hydeengine.site_pre_processors.NodeInjector' : {
-               'variable' : 'blog_node',
-               'path' : 'content/blog'
+            'injections' : {
+                'blog_node' : 'content/blog',
+            }
         }
     }
 }
