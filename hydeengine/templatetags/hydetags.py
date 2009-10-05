@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template import Template
 from django.template.loader import render_to_string
 from django.template.defaultfilters import truncatewords_html
+from django.template.loader_tags import do_include
 from django.template import Library
 from django.utils.safestring import mark_safe
 from hydeengine.file_system import Folder
@@ -35,7 +36,7 @@ def hyde_context(parser, token):
 def excerpt(parser, token):
     nodelist = parser.parse(('endexcerpt',))
     parser.delete_first_token()
-    return BracketNode("Excerpt", nodelist)
+    return BracketNode("Excerpt", nodelist)    
     
 @register.tag(name="article")
 def excerpt(parser, token):
@@ -267,3 +268,23 @@ class RenderHydeListingPageRewriteRulesNode(template.Node):
             "###  BEGIN GENERATED REWRITE RULES  ####\n" \
           + ''.join(rules) \
           + "\n####  END GENERATED REWRITE RULES  ####"
+          
+class IncludeTextNode(template.Node):
+  def __init__(self, include_node):
+      self.include_node = include_node
+
+  def render(self, context):
+      try:
+          import markdown
+          import typogrify
+      except ImportError:
+          print u"`includetext` requires Markdown and Typogrify."
+          raise
+      output = self.include_node.render(context)
+      output = markdown.markdown(output)    
+      output = typogrify.typogrify(output)            
+      return output          
+ 
+@register.tag(name="includetext")
+def includetext(parser, token): 
+      return IncludeTextNode(do_include(parser, token))
