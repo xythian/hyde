@@ -11,6 +11,21 @@ from siteinfo import SiteNode
     after the loading of site info.
 """
 
+class Category:
+    def __init__(self):
+        self.posts = set()
+        self.feed_url = None
+    
+    @property
+    def posts(self):
+        return self.posts
+
+    @property
+    def feed_url(self):
+        return self.feed_url
+
+    
+
 class CategoriesManager:   
     
     """
@@ -27,13 +42,12 @@ class CategoriesManager:
             if hasattr(post, 'categories') and post.categories != None:
                 for category in post.categories:
                     if categories.has_key(category) == False:
-                        categories[category] = set()
-                    categories[category].add(post)     
+                        categories[category] = Category()
+                    categories[category].posts.add(post)     
         context['categories'] = categories 
         node.categories = categories
         
 class NodeInjector(object):
-        
     """
         Finds the node that represents the given path and injects it with the given     
         variable name into all the posts contained in the current node.
@@ -55,3 +69,4 @@ class NodeInjector(object):
                 continue
             for post in node.walk_pages():
                 setattr(post, varName, nodeFromPathFragment)
+
