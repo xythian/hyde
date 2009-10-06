@@ -3,7 +3,7 @@ import fnmatch
 from django.template.loader import render_to_string
 from django.conf import settings
 from file_system import File     
-
+from subprocess import check_call, CalledProcessError
 
 class TemplateProcessor:
     @staticmethod
@@ -50,13 +50,31 @@ class SASS:
         sass = settings.SASS_PATH
         if not sass or not os.path.exists(sass):
             raise ValueError("SASS Processor cannot be found at [%s]" % sass)
-        print out_file
         status, output = commands.getstatusoutput(
         u"%s %s %s" % (sass, resource.source_file.path, out_file))
         if status > 0: 
             print output
             return None
-        resource.source_file.delete()
+        resource.source_file.delete()    
+        
+class LessCSS:
+    @staticmethod
+    def process(resource):
+        out_file = File(resource.source_file.path_without_extension + ".css")
+        if not out_file.parent.exists:
+            out_file.parent.make()
+        less = settings.LESS_CSS_PATH
+        if not less or not os.path.exists(less):
+            raise ValueError("Less CSS Processor cannot be found at [%s]" % less)
+        try:
+            check_call([less, resource.source_file.path, out_file.path])                                            
+        except CalledProcessError, e:
+            print 'Syntax Error when calling less'
+            raise
+        else:            
+            resource.source_file.delete()        
+        if not out_file.exists:    
+            print 'Error Occurred when processing with Less'
 
 class YUICompressor:
     @staticmethod
