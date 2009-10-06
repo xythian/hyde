@@ -8,6 +8,7 @@ import sys
 import shutil
 import thread
 import threading
+import subprocess
 
 from collections import defaultdict
 from datetime import datetime
@@ -232,8 +233,12 @@ class Generator(object):
         self.watcher = Thread(target=self.__watch__)
         self.regenerator = Thread(target=self.__regenerate__)
         self.processor = Processor(settings)
-        self.quitting = False
-    
+        self.quitting = False                                        
+
+    def notify(self, title, message):     
+        if hasattr(settings, "GROWL") and settings.GROWL and File(settings.GROWL).exists:
+            subprocess.call([settings.GROWL, "-n", "Hyde", "-t", title, "-m", message])        
+        
     def pre_process(self, node):
         self.processor.pre_process(node)
         
@@ -274,19 +279,26 @@ class Generator(object):
     def post_process(self, node):
         self.processor.post_process(node)
     
-    def process_all(self):
-        self.pre_process(self.siteinfo)
-        for resource in self.siteinfo.walk_resources():
-            self.process(resource)
-        self.post_process(self.siteinfo)
-        self.siteinfo.target_folder.copy_contents_of(
-               self.siteinfo.temp_folder, incremental=True)
+    def process_all(self):     
+        self.notify(self.siteinfo.name, "Website Generation Started") 
+        try:
+            self.pre_process(self.siteinfo)
+            for resource in self.siteinfo.walk_resources():
+                self.process(resource)
+            self.post_process(self.siteinfo)
+            self.siteinfo.target_folder.copy_contents_of(
+                   self.siteinfo.temp_folder, incremental=True)              
+        except:
+            self.notify(self.siteinfo.name, "Generation Failed")
+            raise
+        self.notify(self.siteinfo.name, "Generation Complete")               
     
     def __regenerate__(self):
         pending = False
         while True:
             try:
-                if self.quit_event.isSet():
+                if self.quit_event.isSet():     
+                    self.notify(self.siteinfo.name, "Exiting Regenerator")
                     print "Exiting regenerator..."
                     break
                 
@@ -317,7 +329,8 @@ class Generator(object):
         while True:
             try:
                 if self.quit_event.isSet():
-                    print "Exiting watcher..."
+                    print "Exiting watcher..."    
+                    self.notify(self.siteinfo.name, "Exiting Watcher")                    
                     break
                 try:
                     pending = self.queue.get(timeout=10)
@@ -327,7 +340,8 @@ class Generator(object):
                 self.queue.task_done()
                 if pending.setdefault("exception", False):
                     self.quit_event.set()
-                    print "Exiting watcher"
+                    print "Exiting watcher"     
+                    self.notify(self.siteinfo.name, "Exiting Watcher")                    
                     break
                 
                 if 'resource' in pending:
@@ -399,7 +413,8 @@ class Generator(object):
         if self.quitting:
             return
         self.quitting = True
-        print "Shutting down..."
+        print "Shutting down..."    
+        self.notify(self.siteinfo.name, "Shutting Down")        
         self.siteinfo.dont_monitor()
         self.quit_event.set()
         if self.exit_listner:
