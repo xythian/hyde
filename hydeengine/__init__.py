@@ -237,7 +237,10 @@ class Generator(object):
 
     def notify(self, title, message):     
         if hasattr(settings, "GROWL") and settings.GROWL and File(settings.GROWL).exists:
-            subprocess.call([settings.GROWL, "-n", "Hyde", "-t", title, "-m", message])        
+            try:
+                subprocess.call([settings.GROWL, "-n", "Hyde", "-t", title, "-m", message])        
+            except:
+                pass    
         
     def pre_process(self, node):
         self.processor.pre_process(node)
@@ -361,10 +364,12 @@ class Generator(object):
                     self.regenerate_request.set()
                     continue
                 
+                self.notify(self.siteinfo.name, "Processing " + resource.name)                                     
                 if self.process(resource, pending['change']):
                     self.post_process(resource.node)
                     self.siteinfo.target_folder.copy_contents_of(
-                        self.siteinfo.temp_folder, incremental=True)
+                        self.siteinfo.temp_folder, incremental=True)   
+                    self.notify(self.siteinfo.name, "Completed processing " + resource.name)                                                             
             except:
                 self.quit()
                 raise
