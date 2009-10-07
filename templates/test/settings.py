@@ -60,7 +60,13 @@ MEDIA_PROCESSORS = {
                 'hydeengine.media_processors.YUICompressor',),
         '.ccss':('hydeengine.media_processors.TemplateProcessor',
                 'hydeengine.media_processors.CleverCSS',
-                'hydeengine.media_processors.YUICompressor',),
+                'hydeengine.media_processors.YUICompressor',),  
+        '.sass':('hydeengine.media_processors.TemplateProcessor',
+                'hydeengine.media_processors.SASS',
+                'hydeengine.media_processors.YUICompressor',),                
+        '.less':('hydeengine.media_processors.TemplateProcessor',
+                'hydeengine.media_processors.LessCSS',
+                'hydeengine.media_processors.YUICompressor',),                
         '.hss':(
                 'hydeengine.media_processors.TemplateProcessor',
                 'hydeengine.media_processors.HSS',
@@ -110,7 +116,15 @@ FILTER = {
 }        
 
 
-#Processor Configuration
+#Processor Configuration  
+
+# 
+#  Set this to the output of `which growlnotify`. If `which`  returns emtpy,
+#  install growlnotify from the Extras package that comes with the Growl disk image.
+# 
+#
+GROWL = None
+
 
 # path for YUICompressor, or None if you don't
 # want to compress JS/CSS. Project homepage:

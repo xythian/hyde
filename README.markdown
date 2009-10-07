@@ -37,7 +37,9 @@ The hyde engine has three entry points:
     
     This will process the content and media and copy the generated website to your deploy directory. 
 
-    If the -k option is specified, hyde will monitor the source folder for changes and automatically process them when the changes are encountered. This option is very handy when tweaking css or markup to quickly check the results. Note of caution: This option does not update listing files or excerpt files. It is recommended that you run -g again before you deploy the website.
+    If the -k option is specified, hyde will monitor the source folder for changes and automatically process them when the changes are encountered. This option is very handy when tweaking css or markup to quickly check the results. Note of caution: This option does not update listing files or excerpt files. It is recommended that you run -g again before you deploy the website.  
+    
+    If you are on Mac OS X and would like to get Growl notifications, just set the GROWL setting to the `growlnotify` script path.
 
 3. Web Server
 
@@ -115,7 +117,15 @@ Runs through the all the files defined in the configuration associated with ``'h
 
 You need to install SASS (see [the project website][sass]) and set the ``SASS_PATH`` variable to the path to the ``sass`` script.
 
-[sass]: http://sass-lang.com/
+[sass]: http://sass-lang.com/   
+
+#### Less CSS Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.LessCSS'`` and converts them to css. 
+
+You need to install Less (see [the project website][lesscss]) and set the ``LESS_CSS_PATH`` variable to the path to the ``lessc`` script.
+
+[lesscss]: http://lesscss.org/
 
 ### Content Processors
 
