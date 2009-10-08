@@ -288,13 +288,18 @@ class Generator(object):
             self.pre_process(self.siteinfo)
             for resource in self.siteinfo.walk_resources():
                 self.process(resource)
-            self.post_process(self.siteinfo)
-            self.siteinfo.target_folder.copy_contents_of(
-                   self.siteinfo.temp_folder, incremental=True)              
+            self.complete_generation()
         except:
             self.notify(self.siteinfo.name, "Generation Failed")
             raise
         self.notify(self.siteinfo.name, "Generation Complete")               
+        
+    def complete_generation(self):
+        self.post_process(self.siteinfo)
+        self.siteinfo.target_folder.copy_contents_of(
+               self.siteinfo.temp_folder, incremental=True)
+        if(hasattr(settings, "post_deploy")):
+            settings.post_deploy()  
     
     def __regenerate__(self):
         pending = False
@@ -366,10 +371,8 @@ class Generator(object):
                 
                 self.notify(self.siteinfo.name, "Processing " + resource.name)                                     
                 if self.process(resource, pending['change']):
-                    self.post_process(resource.node)
-                    self.siteinfo.target_folder.copy_contents_of(
-                        self.siteinfo.temp_folder, incremental=True)   
-                    self.notify(self.siteinfo.name, "Completed processing " + resource.name)                                                             
+                    self.complete_generation()   
+                    self.notify(self.siteinfo.name, "Completed processing " + resource.name)                                                                                      
             except:
                 self.quit()
                 raise
