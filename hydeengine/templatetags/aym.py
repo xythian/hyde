@@ -45,6 +45,27 @@ class MarkdownNode(template.Node):
         return markdown.markdown(output)
 
 
+@register.tag(name="restructuredtext")
+def restructuredtextParser(parser, token):
+    nodelist = parser.parse(('endrestructuredtext',))
+    parser.delete_first_token()
+    return RestructuredTextNode(nodelist)
+
+class RestructuredTextNode(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        output = self.nodelist.render(context)
+        try:
+            from docutils.core import publish_parts
+        except ImportError:
+            print u"Requires Markdown library to use Markdown tag."
+            raise
+        parts = publish_parts(source=output, writer_name="html4css1")
+        return safestring.mark_safe(parts.get('fragment'))
+
+
 @register.tag(name="syntax")
 def syntaxHighlightParser(parser, token):
     token_list = token.split_contents()
