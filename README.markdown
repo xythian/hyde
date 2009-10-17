@@ -199,6 +199,28 @@ It is used as follows:
     {% endtextile %}
 
 
+### reStructuredText
+
+Requires docutils to be installed.
+
+    sudo easy_install docutils
+
+``restructuredtext`` renders the enclosed text as [reStructuredText](http://docutils.sourceforge.net/rst.html) markup.
+It is used as follows:
+
+    <p> I love templates. </p>
+    {% restructuredtext %}
+    Render this **content all in reStructuredText**.
+
+         Writing in reStructuredText is also quicker than
+         writing in HTML.
+
+    #. Or at least that is my opinion.
+    #. What about you?
+    
+    {% endrestructuredtext %}
+
+
 ### Syntax
 
 Requires Pygments.
@@ -272,3 +294,4 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [Valentin Jacquemin](http://github.com/poxd)
 - [Johannes Reinhard](http://github.com/SpeckFleck)
 - [Steve Losh](http://github.com/sjl)
+- [William Amberg](http://github.com/wamberg)
