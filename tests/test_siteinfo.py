@@ -546,9 +546,6 @@ class TestProcessing(MonitorTests):
         source_text = actual_html_resource.file.read_all()
         assert original_source == source_text        
         actual_text = actual_html_resource.temp_file.read_all()        
-        # TODO: actual text is not whitespace condensed
-        print "expected text: %s" % expected_text
-        print "actual text: %s" % actual_text
         self.assert_html_equals(expected_text, actual_text)
         
     def test_process_page_rendering(self):
