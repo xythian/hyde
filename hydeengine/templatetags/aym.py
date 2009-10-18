@@ -39,6 +39,8 @@ class MarkdownNode(template.Node):
     def render(self, context):
         output = self.nodelist.render(context)
         try:
+            import markdown2 as markdown
+        except ImportError:
             import markdown
         except ImportError:
             print u"Requires Markdown library to use Markdown tag."
