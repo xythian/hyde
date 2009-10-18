@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.utils import safestring
 
 import hashlib
@@ -62,7 +63,11 @@ class RestructuredTextNode(template.Node):
         except ImportError:
             print u"Requires Markdown library to use Markdown tag."
             raise
-        parts = publish_parts(source=output, writer_name="html4css1")
+        overrides = {}
+        if settings.RST_SETTINGS_OVERRIDES:
+            overrides = settings.RST_SETTINGS_OVERRIDES
+        parts = publish_parts(source=output, writer_name="html4css1",
+                settings_overrides=overrides)
         return safestring.mark_safe(parts.get('fragment'))
 
 
