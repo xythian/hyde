@@ -108,7 +108,19 @@ class SyntaxHighlightNode(template.Node):
         formatter = formatters.HtmlFormatter()
         h = pygments.highlight(output, lexer, formatter)
         return safestring.mark_safe(h)
-        
+
+class NewlineLessNode(Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        return re.sub('\s{2,}', ' ', normalize_newlines(self.nodelist.render(context)).replace('\n', ''))
+
+@register.tag(name="newlineless")
+def newlineless(parser, token):
+    nodelist = parser.parse(('endnewlineless',))
+    parser.delete_first_token()
+    return NewlineLessNode(nodelist)        
     
 @register.filter
 def md5_querystring(value, arg=None):
