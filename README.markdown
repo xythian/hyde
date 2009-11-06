@@ -281,7 +281,7 @@ The default site layout contains templates for basic site structure, navigation,
 
 The [Ringce][ringce] website source is available as a reference implementation.
 
-[ringce]:http://github.com/lakshmivyas/ringce/tree/master
+[ringce]:http://github.com/lakshmivyas/ringce
 
 # CONTRIBUTORS
 
@@ -294,4 +294,6 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [Valentin Jacquemin](http://github.com/poxd)
 - [Johannes Reinhard](http://github.com/SpeckFleck)
 - [Steve Losh](http://github.com/sjl)
-- [William Amberg](http://github.com/wamberg)
+- [William Amberg](http://github.com/wamberg)          
+- [James Clarke](http://github.com/jc)
+- [Benjamin Pollack](http://github.com/bpollack)
