@@ -289,9 +289,11 @@ class Generator(object):
             for resource in self.siteinfo.walk_resources():
                 self.process(resource)
             self.complete_generation()
-        except:
+        except:                                                  
+            print >> sys.stderr, "Generation Failed"
+            print >> sys.stderr, sys.exc_info()
             self.notify(self.siteinfo.name, "Generation Failed")
-            raise
+            return
         self.notify(self.siteinfo.name, "Generation Complete")               
         
     def complete_generation(self):
@@ -328,9 +330,13 @@ class Generator(object):
                     self.regeneration_complete.clear()
                     pending = True
                     self.regenerate_request.clear()
-            except:
-                self.quit()
-                raise
+            except:                 
+                print >> sys.stderr, "Error during regeneration"
+                print >> sys.stderr, sys.exc_info()
+                self.notify(self.siteinfo.name, "Error during regeneration")
+                self.regeneration_complete.set()
+                self.regenerate_request.clear()
+                pending = False
     
     def __watch__(self):
         regenerating = False
@@ -373,9 +379,13 @@ class Generator(object):
                 if self.process(resource, pending['change']):
                     self.complete_generation()   
                     self.notify(self.siteinfo.name, "Completed processing " + resource.name)                                                                                      
-            except:
-                self.quit()
-                raise
+            except:  
+                print >> sys.stderr, "Error during regeneration"
+                print >> sys.stderr, sys.exc_info()      
+                self.notify(self.siteinfo.name, "Error during regeneration")
+                self.regeneration_complete.set()
+                self.regenerate_request.clear()
+                regenerating = False
 
     
     def generate(self, deploy_path=None, 
@@ -397,7 +407,6 @@ class Generator(object):
                 self.siteinfo.monitor(self.queue)
             except (KeyboardInterrupt, IOError, SystemExit):
                 self.quit()
-                raise
             except:
                 self.quit()
                 raise
@@ -412,7 +421,6 @@ class Generator(object):
             self.siteinfo.dont_monitor()
         except (KeyboardInterrupt, IOError, SystemExit):
             self.quit()
-            raise
         except:
             self.quit()
             raise
