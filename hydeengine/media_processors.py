@@ -13,7 +13,7 @@ class TemplateProcessor:
             resource.source_file.write(rendered)
         except:
             print >> sys.stderr, \
-            "Error while rendering page %s" % \
+            "***********************\nError while rendering page %s\n***********************" % \
             resource.url
             raise             
     
