@@ -1,6 +1,8 @@
 from django import template
 from django.conf import settings
 from django.utils import safestring
+from django.template import Node
+from django.utils.text import normalize_newlines
 
 import hashlib
 
