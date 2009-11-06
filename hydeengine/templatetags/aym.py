@@ -4,6 +4,7 @@ from django.utils import safestring
 from django.template import Node
 from django.utils.text import normalize_newlines
 
+import re
 import hashlib
 
 register = template.Library()
