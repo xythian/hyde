@@ -95,6 +95,15 @@ Runs through the all the files defined in the configuration associated with ``'h
 In the settings file, set ``YUI_COMPRESSOR`` to
 be a path to a [YUI Compressor][yuic] jar on your computer.
 
+#### Closure Compiler
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.ClosureCompiler'`` and compresses them. 
+
+[closure]: http://closure-compiler.googlecode.com/
+
+In the settings file, set ``CLOSURE_COMPILER`` to
+be a path to a [Closure Compiler][closure] jar on your computer.
+
 #### Clever CSS Processor
 
 Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.CleverCSS'`` and converts them to css. 
