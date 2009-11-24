@@ -2,6 +2,7 @@ from django import template
 from django.conf import settings
 from django.utils import safestring
 
+import cStringIO as StringIO
 import hashlib
 
 register = template.Library()
@@ -71,6 +72,30 @@ class RestructuredTextNode(template.Node):
         parts = publish_parts(source=output, writer_name="html4css1",
                 settings_overrides=overrides)
         return safestring.mark_safe(parts.get('fragment'))
+
+
+@register.tag(name="asciidoc")
+def asciidocParser(parser, token):
+    nodelist = parser.parse(('endasciidoc',))
+    parser.delete_first_token()
+    return asciidocNode(nodelist)
+
+class asciidocNode(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        output = self.nodelist.render(context)
+        try:
+            from asciidocapi import AsciiDocAPI
+        except ImportError:
+            print u"Requires AsciiDoc library to use AsciiDoc tag."
+            raise
+        asciidoc = AsciiDocAPI()
+        asciidoc.options('--no-header-footer')
+        result = StringIO.StringIO()
+        asciidoc.execute(StringIO.StringIO(output), result, 'html4')
+        return safestring.mark_safe(result.getvalue())
 
 
 @register.tag(name="syntax")
