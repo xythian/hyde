@@ -110,11 +110,6 @@ def syntaxHighlightParser(parser, token):
     parser.delete_first_token()
     return SyntaxHighlightNode(nodelist,lexer)
 
-def get_lexer(value,arg):
-    if arg is None:
-        return lexers.guess_lexer(value)
-    return lexers.get_lexer_by_name(arg)
-
 class SyntaxHighlightNode(template.Node):
     def __init__(self, nodelist, lexer):
         self.nodelist = nodelist
@@ -124,16 +119,22 @@ class SyntaxHighlightNode(template.Node):
         try:
             import pygments
             from pygments import lexers
+            self.lexers = lexers
             from pygments import formatters
         except ImportError:
             print u"Requires Pygments library to use syntax highlighting tags."
         
         output = self.nodelist.render(context)
-        lexer = get_lexer(output, self.lexer)
+        lexer = self.get_lexer(output)
         formatter = formatters.HtmlFormatter()
         h = pygments.highlight(output, lexer, formatter)
         return safestring.mark_safe(h)
         
+    def get_lexer(self, value):
+        if self.lexer is None:
+            return self.lexers.guess_lexer(value)
+        return self.lexers.get_lexer_by_name(self.lexer)
+
     
 @register.filter
 def md5_querystring(value, arg=None):
