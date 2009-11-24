@@ -94,7 +94,7 @@ class asciidocNode(template.Node):
         asciidoc = AsciiDocAPI()
         asciidoc.options('--no-header-footer')
         result = StringIO.StringIO()
-        asciidoc.execute(StringIO.StringIO(output), result, 'html4')
+        asciidoc.execute(StringIO.StringIO(output.encode('utf-8')), result, 'html4')
         return safestring.mark_safe(result.getvalue())
 
 
