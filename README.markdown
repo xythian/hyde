@@ -221,6 +221,28 @@ It is used as follows:
     {% endrestructuredtext %}
 
 
+### asciidoc
+
+Requires asciidoc to be installed.
+
+``asciidoc`` renders the enclosed text as [asciidoc](http://www.methods.co.nz/asciidoc/) markup.
+It is used as follows:
+
+    <p> I love templates. </p>
+    {% asciidoc %}
+    Render this *content all in asciidoc*.
+
+    ________________________________________
+    Writing in asciidoc is also quicker than
+    writing in HTML.
+    ________________________________________
+
+    . Or at least that is my opinion.
+    . What about you?
+
+    {% endasciidoc %}
+
+
 ### Syntax
 
 Requires Pygments.
