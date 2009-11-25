@@ -327,4 +327,6 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [Steve Losh](http://github.com/sjl)
 - [William Amberg](http://github.com/wamberg)          
 - [James Clarke](http://github.com/jc)
-- [Benjamin Pollack](http://github.com/bpollack)
+- [Benjamin Pollack](http://github.com/bpollack)   
+- [Andrey](http://github.com/andrulik)   
+- [Toby White](http://github.com/tow)  
