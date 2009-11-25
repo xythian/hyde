@@ -1,8 +1,10 @@
 from django import template
 from django.conf import settings
 from django.utils import safestring
-
+from django.template import Node
+from django.utils.text import normalize_newlines
 import cStringIO as StringIO
+import re
 import hashlib
 
 register = template.Library()
@@ -130,10 +132,24 @@ class SyntaxHighlightNode(template.Node):
         h = pygments.highlight(output, lexer, formatter)
         return safestring.mark_safe(h)
         
-    def get_lexer(self, value):
-        if self.lexer is None:
-            return self.lexers.guess_lexer(value)
-        return self.lexers.get_lexer_by_name(self.lexer)
+def get_lexer(self, value):
+    if self.lexer is None:
+        return self.lexers.guess_lexer(value)
+    return self.lexers.get_lexer_by_name(self.lexer)
+
+
+class NewlineLessNode(Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        return re.sub('\s{2,}', ' ', normalize_newlines(self.nodelist.render(context)).replace('\n', ''))
+
+@register.tag(name="newlineless")
+def newlineless(parser, token):
+    nodelist = parser.parse(('endnewlineless',))
+    parser.delete_first_token()
+    return NewlineLessNode(nodelist)        
 
     
 @register.filter
