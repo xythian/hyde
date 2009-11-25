@@ -78,8 +78,10 @@ class LessCSS:
 
 class YUICompressor:
     @staticmethod
-    def process(resource):
-        compress = settings.YUI_COMPRESSOR
+    def process(resource):                
+        if settings.YUI_COMPRESSOR == None:
+            return
+        compress = settings.YUI_COMPRESSOR                
         if not os.path.exists(compress):
             compress = os.path.join(
                     os.path.dirname(
