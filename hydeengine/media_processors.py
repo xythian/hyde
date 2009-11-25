@@ -78,8 +78,10 @@ class LessCSS:
 
 class YUICompressor:
     @staticmethod
-    def process(resource):
-        compress = settings.YUI_COMPRESSOR
+    def process(resource):                
+        if settings.YUI_COMPRESSOR == None:
+            return
+        compress = settings.YUI_COMPRESSOR                
         if not os.path.exists(compress):
             compress = os.path.join(
                     os.path.dirname(
@@ -93,6 +95,28 @@ class YUICompressor:
         status, output = commands.getstatusoutput(
         u"java -jar %s %s > %s" % (compress, resource.source_file.path, tmp_file.path))
         if status > 0: 
+            print output
+        else:
+            resource.source_file.delete()
+            tmp_file.move_to(resource.source_file.path)
+            
+class ClosureCompiler:
+    @staticmethod
+    def process(resource):
+        compress = settings.CLOSURE_COMPILER
+        if not os.path.exists(compress):
+            compress = os.path.join(
+                    os.path.dirname(
+                    os.path.abspath(__file__)), "..", compress)
+        
+        if not compress or not os.path.exists(compress):
+            raise ValueError(
+            "Closure Compiler cannot be found at [%s]" % compress)
+            
+        tmp_file = File(resource.source_file.path + ".z-tmp")
+        status, output = commands.getstatusoutput(
+        u"java -jar %s --js=%s --js_output_file=%s" % (compress, resource.source_file.path, tmp_file.path))
+        if status > 0:
             print output
         else:
             resource.source_file.delete()
