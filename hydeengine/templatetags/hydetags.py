@@ -87,29 +87,40 @@ class LatestExcerptNode(template.Node):
             return ""                    
             
 class RecentPostsNode(template.Node):
-    def __init__(self, var='recent_posts', count=5, node=None):
+    def __init__(self, var='recent_posts', count=5, node=None, categories=None):
         self.var = var
         self.count = count        
-        self.node=node                    
+        self.node=node
+        self.categories = categories
                 
-    def render(self, context):             
+    def render(self, context):
         if not self.node:
             self.node = context['site']
         else:
             self.node = self.node.resolve(context)    
-            
         if not self.count == 5:
             self.count = self.count.render(context)    
             
         if not self.var == 'recent_posts':
             self.var = self.var.render(context) 
+        
+        category_filter = None
+        if not self.categories is None:
+            import re
+            category_filter = re.compile(self.categories)
 
         if (not hasattr(self.node, 'complete_page_list') or 
             not self.node.complete_page_list):    
             complete_page_list = sorted(
                 self.node.walk_pages(),
                 key=operator.attrgetter("created"), reverse=True)
-            complete_page_list = filter(lambda page: page.display_in_list, 
+            if category_filter is None:
+                complete_page_list = filter(lambda page: page.display_in_list, 
+                                            complete_page_list)    
+            else:
+                complete_page_list = filter(lambda page: page.display_in_list and \
+                                            reduce(lambda c1,c2: c1 or category_filter.match(c2) is not None, \
+                                                    hasattr(page, 'categories') and page.categories or [], False), 
                                             complete_page_list)    
             self.node.complete_page_list = complete_page_list
 
@@ -122,14 +133,17 @@ def recent_posts(parser, token):
     tokens = token.split_contents()
     count = 5
     node = None          
+    categories = None
     var = 'recent_posts'        
     if len(tokens) > 1:
         var = Template(tokens[1])    
     if len(tokens) > 2:
         count = Template(tokens[2])
     if len(tokens) > 3:
-        node = parser.compile_filter(tokens[3])        
-    return RecentPostsNode(var, count, node)            
+        node = parser.compile_filter(tokens[3])   
+    if len(tokens) > 4:
+        categories = tokens[4]  
+    return RecentPostsNode(var, count, node, categories)
                     
 @register.tag(name="latest_excerpt")
 def latest_excerpt(parser, token):

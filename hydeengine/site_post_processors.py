@@ -140,6 +140,7 @@ class ContentNodeAdapter:
         for post in self.category.posts:
             yield post
 
+
 class FeedGenerator:
     """
     Base abstract class for the generation of syndication feeds
