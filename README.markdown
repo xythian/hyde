@@ -268,6 +268,17 @@ a code syntax highlighter. Usage is:
     return [obj autorelease];
     {% endsyntax %}
 
+To generate the corresponding CSS, first list the available styles
+
+    python
+    >>> from pygments.styles import get_all_styles
+    >>> list(get_all_styles())
+    ['manni', 'perldoc', 'borland', 'colorful', 'default', 'murphy', 'vs', 'trac', 'tango', 'fruity', 'autumn', 'bw', 'emacs', 'pastie', 'friendly', 'native']
+
+Then choose a style and generate a style sheet
+
+    pygmentize -f html -S native -a .highlight > pygments.css
+
 They are both intended to make writing static content
 quicker and less painful.
 
