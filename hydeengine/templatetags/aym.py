@@ -132,10 +132,10 @@ class SyntaxHighlightNode(template.Node):
         h = pygments.highlight(output, lexer, formatter)
         return safestring.mark_safe(h)
         
-def get_lexer(self, value):
-    if self.lexer is None:
-        return self.lexers.guess_lexer(value)
-    return self.lexers.get_lexer_by_name(self.lexer)
+    def get_lexer(self, value):
+        if self.lexer is None:
+            return self.lexers.guess_lexer(value)
+        return self.lexers.get_lexer_by_name(self.lexer)
 
 
 class NewlineLessNode(Node):
