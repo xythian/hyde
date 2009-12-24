@@ -111,20 +111,19 @@ class RecentPostsNode(template.Node):
 
         if (not hasattr(self.node, 'complete_page_list') or 
             not self.node.complete_page_list):    
-            complete_page_list = sorted(
-                self.node.walk_pages(),
-                key=operator.attrgetter("created"), reverse=True)
-            if category_filter is None:
-                complete_page_list = filter(lambda page: page.display_in_list, 
-                                            complete_page_list)    
-            else:
-                complete_page_list = filter(lambda page: page.display_in_list and \
-                                            reduce(lambda c1,c2: c1 or category_filter.match(c2) is not None, \
-                                                    hasattr(page, 'categories') and page.categories or [], False), 
-                                            complete_page_list)    
-            self.node.complete_page_list = complete_page_list
+                complete_page_list = sorted(
+                    self.node.walk_pages(),
+                    key=operator.attrgetter("created"), reverse=True)
+                complete_page_list = filter(lambda page: page.display_in_list, complete_page_list)
+                self.node.complete_page_list = complete_page_list
 
-        context[self.var] = self.node.complete_page_list[:int(self.count)]  
+        if category_filter is None:
+            context[self.var] = self.node.complete_page_list[:int(self.count)]
+        else:
+            posts = filter(lambda page: page.display_in_list and \
+                                            reduce(lambda c1,c2: c1 or category_filter.match(c2) is not None, \
+                                                    hasattr(page, 'categories') and page.categories or [], False), complete_page_list)
+            context[self.var] = posts[:int(self.count)]
         return ''
         
             

@@ -40,6 +40,7 @@ def setup_module(module):
                 }
             }
         }
+    settings.LISTING_PAGE_NAMES = ['listing', 'index', 'default']
     
 def teardown_module(module):
     TEST_SITE.delete()
