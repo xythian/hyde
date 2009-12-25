@@ -31,13 +31,17 @@ class TextileNode(template.Node):
 
 @register.tag(name="markdown")
 def markdownParser(parser, token):
+    token_list = token.split_contents()
+    extensions = token_list[1:]
+
     nodelist = parser.parse(('endmarkdown',))
     parser.delete_first_token()
-    return MarkdownNode(nodelist)
+    return MarkdownNode(nodelist, extensions)
 
 class MarkdownNode(template.Node):
-    def __init__(self, nodelist):
+    def __init__(self, nodelist, extensions):
         self.nodelist = nodelist
+        self.extensions = extensions
 
     def render(self, context):
         output = self.nodelist.render(context)
@@ -48,7 +52,7 @@ class MarkdownNode(template.Node):
         except ImportError:
             print u"Requires Markdown library to use Markdown tag."
             raise
-        return markdown.markdown(output)
+        return markdown.markdown(output, self.extensions)
 
 
 @register.tag(name="restructuredtext")
