@@ -133,7 +133,7 @@ class Server(object):
             for page in site.walk_pages(): # build url to file mapping
                 if page.listing and page.file.name_without_extension not in \
                    (settings.LISTING_PAGE_NAMES + [page.node.name]):
-                    filename = os.path.join(settings.DEPLOY_DIR, page.name)
+                    filename = page.target_file.path
                     url = page.url.strip('/')
                     url_file_mapping[url] = filename
         
