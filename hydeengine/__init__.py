@@ -182,8 +182,14 @@ class Server(object):
 
         # even if we're still using clean urls, we still need to serve media.
         if settings.GENERATE_CLEAN_URLS:
-            conf = {'/media': {
-            'tools.staticdir.dir':os.path.join(deploy_folder.path, 'media'),
+            media_web_path = '/%s/media' % settings.SITE_ROOT.strip('/')
+            # if SITE_ROOT is /, we end up with //media
+            media_web_path = media_web_path.replace('//', '/')
+            
+            conf = {media_web_path: {
+            'tools.staticdir.dir':os.path.join(deploy_folder.path,
+                                               settings.SITE_ROOT.strip('/'),
+                                               'media'),
             'tools.staticdir.on':True
             }}
         else:
