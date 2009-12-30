@@ -39,6 +39,3 @@ class WpImporter:
         finally:
             file.close()
         os.utime(path, (time.mktime(post_date.timetuple()),time.mktime(post_date.timetuple())))
-
-if __name__ == "__main__" :
-    WpImporter("http://www.poxd.org", "pollux", "7beckham7", "blogpollux_wp")
