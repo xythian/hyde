@@ -51,10 +51,10 @@ class MarkdownNode(template.Node):
         extensions = []
         if hasattr(settings,'MD_EXTENSIONS'):
             extensions = settings.MD_EXTENSIONS
-        extensions_config = None
+        extensions_config = {}
         if hasattr(settings,'MD_EXTENSIONS_CONFIG'):
             extensions_config = settings.MD_EXTENSIONS_CONFIG
-        md = markdown.Markdown(extensions=extensions)
+        md = markdown.Markdown(extensions=extensions,extension_configs=extensions_config)
         return md.convert(output)
 
 
