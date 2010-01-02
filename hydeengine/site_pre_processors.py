@@ -41,9 +41,14 @@ class CategoriesManager:
         for post in node.walk_pages():           
             if hasattr(post, 'categories') and post.categories != None:
                 for category in post.categories:
-                    if categories.has_key(category) == False:
+                    if categories.has_key(category) is False:
                         categories[category] = Category()
-                    categories[category].posts.add(post)     
+                    categories[category].posts.add(post)  
+            elif hasattr(settings, 'DEFAULT_CATEGORY'):
+                if categories.has_key(settings.DEFAULT_CATEGORY) is False:
+                    categories[settings.DEFAULT_CATEGORY] = Category()   
+                categories[settings.DEFAULT_CATEGORY].posts.add(post)
+                setattr(post, 'categories', [settings.DEFAULT_CATEGORY])
         context['categories'] = categories 
         node.categories = categories
         
