@@ -48,7 +48,14 @@ class MarkdownNode(template.Node):
         except ImportError:
             print u"Requires Markdown library to use Markdown tag."
             raise
-        return markdown.markdown(output)
+        extensions = []
+        if hasattr(settings,'MD_EXTENSIONS'):
+            extensions = settings.MD_EXTENSIONS
+        extensions_config = None
+        if hasattr(settings,'MD_EXTENSIONS_CONFIG'):
+            extensions_config = settings.MD_EXTENSIONS_CONFIG
+        md = markdown.Markdown(extensions=extensions)
+        return md.convert(output)
 
 
 @register.tag(name="restructuredtext")
@@ -128,14 +135,17 @@ class SyntaxHighlightNode(template.Node):
         
         output = self.nodelist.render(context)
         lexer = self.get_lexer(output)
-        formatter = formatters.HtmlFormatter()
+        pygments_options = dict()
+        if hasattr(settings, 'PYGMENTS_OPTIONS'):
+            pygments_options = settings.PYGMENTS_OPTIONS
+        formatter = formatters.HtmlFormatter(**pygments_options)
         h = pygments.highlight(output, lexer, formatter)
         return safestring.mark_safe(h)
         
-def get_lexer(self, value):
-    if self.lexer is None:
-        return self.lexers.guess_lexer(value)
-    return self.lexers.get_lexer_by_name(self.lexer)
+    def get_lexer(self, value):
+        if self.lexer is None:
+            return self.lexers.guess_lexer(value)
+        return self.lexers.get_lexer_by_name(self.lexer)
 
 
 class NewlineLessNode(Node):
