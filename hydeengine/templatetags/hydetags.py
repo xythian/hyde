@@ -122,7 +122,7 @@ class RecentPostsNode(template.Node):
         else:
             posts = filter(lambda page: page.display_in_list and \
                                             reduce(lambda c1,c2: c1 or category_filter.match(c2) is not None, \
-                                                    hasattr(page, 'categories') and page.categories or [], False), complete_page_list)
+                                                    hasattr(page, 'categories') and page.categories or [], False), self.node.complete_page_list)
             context[self.var] = posts[:int(self.count)]
         return ''
         
