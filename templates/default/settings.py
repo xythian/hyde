@@ -12,7 +12,6 @@ TMP_DIR = os.path.join(ROOT_PATH, 'deploy_tmp')
 BACKUPS_DIR = os.path.join(ROOT_PATH, 'backups')
 BACKUP = False
 
-SITE_ROOT = "/"
 SITE_WWW_URL = "http://www.yoursite.com"
 SITE_NAME = "Your Site"
 SITE_AUTHOR = "Your Name"
