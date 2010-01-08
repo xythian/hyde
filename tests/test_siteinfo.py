@@ -693,7 +693,6 @@ class TestProcessing(MonitorTests):
         self.generator.pre_process(site)
         assert context['categories']
         assert len(context['categories']) == 4      
-        print context['categories']
         assert len(context['categories']['wishes'].posts) == 3  
         blog_node = site.find_node(TEST_SITE.child_folder('content/blog'))
         assert context['categories'] == blog_node.categories
