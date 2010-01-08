@@ -99,7 +99,7 @@ class YUICompressor:
         else:
             resource.source_file.delete()
             tmp_file.move_to(resource.source_file.path)
-            
+
 class ClosureCompiler:
     @staticmethod
     def process(resource):
@@ -121,3 +121,23 @@ class ClosureCompiler:
         else:
             resource.source_file.delete()
             tmp_file.move_to(resource.source_file.path)
+
+class Thumbnail:
+    @staticmethod
+    def process(resource):
+        from PIL import Image
+        
+        i = Image.open(resource.source_file.path)
+        i.thumbnail(
+            (settings.THUMBNAIL_MAX_WIDTH, settings.THUMBNAIL_MAX_HEIGHT),
+            Image.ANTIALIAS
+        )
+        
+        orig_path, _, orig_extension = resource.source_file.path.rpartition('.')
+        if "THUMBNAIL_FILENAME_POSTFIX" in dir(settings):
+            postfix = settings.THUMBNAIL_FILENAME_POSTFIX
+        else:
+            postfix = "-thumb"
+        thumb_path = "%s%s.%s" % (orig_path, postfix, orig_extension)
+        
+        i.save(thumb_path)
