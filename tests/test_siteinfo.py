@@ -223,7 +223,7 @@ class TestSiteInfo:
             
     def assert_page_attributes(self, page):
         if page.page_name in (
-                "about", "blog", "2008", "2009", "index"):
+                "about", "blog", "listing", "2008", "2009", "index"):
             assert page.listing
             assert page.node.listing_page
             assert page.node.listing_page == page
@@ -428,10 +428,12 @@ class TestSorting(MonitorTests):
         for page in self.site.content_node.walk_pages():
             if not prev_node or not prev_node == page.node:
                 assert not page.prev
-            elif prev_node == page.node and page.display_in_list:
-                assert page.prev
-                assert page.prev == prev_page
-                assert prev_page == page.prev
+            elif prev_node == page.node and page.display_in_list: 
+                if prev_page:
+                    assert page.prev
+                    assert page.prev == prev_page
+                else: 
+                    assert not page.prev
             if page.display_in_list:    
                 prev_page = page
             prev_node = page.node
@@ -581,8 +583,10 @@ class TestProcessing(MonitorTests):
         assert self.exception_queue.empty()
         
     
-    def test_markdown(self):
-        try:
+    def test_markdown(self): 
+        try: 
+            import markdown2 as markdown
+        except ImportError:
             import markdown
         except ImportError:
             markdown = False
@@ -688,8 +692,9 @@ class TestProcessing(MonitorTests):
         site = context['site']
         self.generator.pre_process(site)
         assert context['categories']
-        assert len(context['categories']) == 4
-        assert len(context['categories']['wishes']) == 3  
+        assert len(context['categories']) == 4      
+        print context['categories']
+        assert len(context['categories']['wishes'].posts) == 3  
         blog_node = site.find_node(TEST_SITE.child_folder('content/blog'))
         assert context['categories'] == blog_node.categories
         
