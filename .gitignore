@@ -7,3 +7,4 @@ deploy/*
 *.log
 pylint*
 *.tmproj
+test_site
