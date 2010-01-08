@@ -14,7 +14,6 @@ BACKUP = False
 
 BLOG_DIR = os.path.join(CONTENT_DIR,"blog")
 
-SITE_ROOT = "/"
 SITE_WWW_URL = "http://www.yoursite.com"
 SITE_NAME = "Your Site"
 SITE_AUTHOR = "Your Name"

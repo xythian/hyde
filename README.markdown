@@ -136,6 +136,18 @@ You need to install Less (see [the project website][lesscss]) and set the ``LESS
 
 [lesscss]: http://lesscss.org/
 
+#### Thumbnail Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.Thumbnail'`` and creates small "thumbnailed" copies. The aspect ratios of the images will be preserved.
+
+You need to install the [Python Imaging Library][PIL] with the ``sudo easy_install PIL`` command.
+
+You also need to set the ``THUMBNAIL_MAX_WIDTH`` and ``THUMBNAIL_MAX_HEIGHT`` variables.
+
+You can set the ``THUMBNAIL_FILENAME_POSTFIX`` to change the string that is appended to the filename of thumbnails. By default this is ``-thumb`` (i.e. the thumbnail of ``my-image.png`` will be called ``my-image-thumb.png``).
+
+[PIL]: http://www.pythonware.com/products/pil/
+
 ### Content Processors
 
 Content processors are run against all files in the content folder whereas the media processors are run against the media folder. No content processors have been created yet.
