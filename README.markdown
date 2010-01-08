@@ -352,4 +352,6 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [James Clarke](http://github.com/jc)
 - [Benjamin Pollack](http://github.com/bpollack)   
 - [Andrey](http://github.com/andrulik)   
-- [Toby White](http://github.com/tow) 
+- [Toby White](http://github.com/tow)
+- [Tim Freund](http://github.com/timfreund)
+- [Russell H](http://github.com/russellhaering)
