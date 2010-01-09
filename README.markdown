@@ -333,9 +333,14 @@ The default site layout contains templates for basic site structure, navigation,
 
 # Examples
 
-The [Ringce][ringce] website source is available as a reference implementation.
+The following websites are built using hyde and are open sourced. 
 
+* [SteveLosh.com][stevelosh]
+* [The Old Ringce Website][ringce]
+
+[stevelosh]:http://github.com/sjl/stevelosh
 [ringce]:http://github.com/lakshmivyas/ringce
+
 
 # CONTRIBUTORS
 
