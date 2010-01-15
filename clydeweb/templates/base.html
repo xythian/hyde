@@ -13,41 +13,7 @@
         <script src="{{static_url("markitup/sets/default/set.js")}}" type="text/javascript" charset="utf-8"></script> 
         
         <link rel="stylesheet" type="text/css" href="{{static_url("markitup/skins/simple/style.css")}}" />
-        <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />
-           <script type="text/javascript">
-                  $(function(){  
-                     $("#editor").markItUp();  
-                     $("#files").tree({ 
-                         ui : { 
-                             dots: false,
-                             theme_name: "apple",
-                             theme_path: "{{static_url("jstree/themes/apple/style.css")}}"
-                         }, 
-                         types : {
-                             "file" : {
-                                        max_children : 0,
-                                        icon : { 
-                                            image : "{{static_url("jstree/themes/apple/file.png")}}"
-                                        }        
-                             }
-                         },
-                        data : {
-                            type: 'json',
-                            opts : {
-                                    url: '/site/mysite/files'
-                            }
-                        },
-                        callback : {
-                            onchange: function(node, tree){
-                                $("#editor").load(
-                                    '/site/mysite/content?' + 
-                                    node.attributes.tooltip);                            
-                            }
-                        }
-
-                     }); 
-                  });
-              </script>
+        <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />           
   </head>
   <body>
       <header>                              
@@ -86,5 +52,40 @@
             href="http://groups.google.com/group/hyde-dev">
                 Discussions</a></li>
       </footer>  
+      <script type="text/javascript">
+                $(function(){  
+                   $("#editor").markItUp();  
+                   $("#files").tree({ 
+                       ui : { 
+                           dots: false,
+                           theme_name: "apple",
+                           theme_path: "{{static_url("jstree/themes/apple/style.css")}}"
+                       }, 
+                       types : {
+                           "file" : {
+                                      max_children : 0,
+                                      icon : { 
+                                          image : "{{static_url("jstree/themes/apple/file.png")}}"
+                                      }        
+                           }
+                       },
+                      data : {
+                          type: 'json',
+                          opts : {
+                                  url: '/site/mysite/files'
+                          }
+                      },
+                      callback : {
+                          onchange: function(node, tree){
+                              $("#editor").load(
+                                  alert("Hi");
+                                  '/site/mysite/content?' + 
+                                  node.attributes.tooltip);                            
+                          }
+                      }
+
+                   }); 
+                });
+            </script>
   </body>
 </html>
