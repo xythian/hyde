@@ -31,7 +31,7 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **opts)
 
 class FilesJSONHandler(tornado.web.RequestHandler):
-    def get(self, site):
+    def get(self, site):           
         if not hasattr(settings, 'siteinfo'):
             setup_env('/Users/lakshmivyas/mysite')
             siteinfo = SiteInfo(settings, '/Users/lakshmivyas/mysite')
@@ -43,27 +43,27 @@ class FilesJSONHandler(tornado.web.RequestHandler):
         def jsresource(resource):
             return dict(
                     attributes = dict(tooltip=resource['path'], rel='file'),
-                    data = resource['name']
+                    data = dict(title=resource['name'])
             )
-        def jsnode(node):  
+        def jsnode(node):
             children = [jsresource(resource) for resource in
                             node['resources']]                           
             children.append([jsnode(child_node)                 
-                                for child_node in node['nodes']])
+                                for child_node in node['nodes']])  
             return dict(
                     attributes = dict(tooltip=node['path']),
-                    data = node['name'],                
-                    children=children,
-                    state='open'
+                    data = dict(title=node['name'],attributes=dict()),                
+                    children=children
                     )
-        jsdict = jsnode(d)
+        jsdict = jsnode(d)           
+        jsdict['state'] = 'open'
         jsonobj = json.dumps(jsdict)    
         self.set_header("Content-Type", "application/json")
         self.write(jsonobj)                                   
         
 class SiteHandler(tornado.web.RequestHandler):
     def get(self, site):
-        self.render("clydeweb/templates/site.html")
+        self.render("clydeweb/templates/site.html", site=site)
             
 
 def main():

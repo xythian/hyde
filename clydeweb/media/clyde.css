@@ -98,7 +98,7 @@ footer{
     width: 960px;
     margin:32px auto;
     padding-top: 96px;
-}
+}       
 
 header h1{                
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -115,6 +115,7 @@ nav ul{
     list-style-type:none;    
 }                        
 
+footer li,
 nav li{
     float:left;       
     margin:0 16px;
@@ -122,20 +123,26 @@ nav li{
 
 aside{
     float:left;     
-    margin-left: 32px;
-    margin-right: 16px;
-}             
+    margin:0 32px;
+}   
+
+aside h2{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+  font-weight: 300;
+}          
 
 section{
     float:left;   
     padding-left: 32px;
     width: 700px;
 }   
+#files a{
+    margin-bottom: 8px;
+}   
 
-#files li{
-    line-height: 24px;
-    vertical-align: baseline;
-}     
 
 section .markItUpEditor{
     min-height: 700px;

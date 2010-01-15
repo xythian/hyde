@@ -6,15 +6,48 @@
         type="text/css" media="screen" charset="utf-8">        
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
         <script type="text/javascript">
-            google.load("jquery", "1");
+            google.load("jquery", "1.3");
         </script>                   
         <script src="{{static_url("jstree/jquery.tree.min.js")}}" type="text/javascript" charset="utf-8"></script> 
         <script src="{{static_url("markitup/jquery.markitup.pack.js")}}" type="text/javascript" charset="utf-8"></script> 
         <script src="{{static_url("markitup/sets/default/set.js")}}" type="text/javascript" charset="utf-8"></script> 
         
         <link rel="stylesheet" type="text/css" href="{{static_url("markitup/skins/simple/style.css")}}" />
-        <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />                      
-      
+        <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />
+           <script type="text/javascript">
+                  $(function(){  
+                     $("#editor").markItUp();  
+                     $("#files").tree({ 
+                         ui : { 
+                             dots: false,
+                             theme_name: "apple",
+                             theme_path: "{{static_url("jstree/themes/apple/style.css")}}"
+                         }, 
+                         types : {
+                             "file" : {
+                                        max_children : 0,
+                                        icon : { 
+                                            image : "{{static_url("jstree/themes/apple/file.png")}}"
+                                        }        
+                             }
+                         },
+                        data : {
+                            type: 'json',
+                            opts : {
+                                    url: '/site/mysite/files'
+                            }
+                        },
+                        callback : {
+                            onchange: function(node, tree){
+                                $("#editor").load(
+                                    '/site/mysite/content?' + 
+                                    node.attributes.tooltip);                            
+                            }
+                        }
+
+                     }); 
+                  });
+              </script>
   </head>
   <body>
       <header>                              
@@ -29,6 +62,9 @@
           </nav>
       </header>
       <aside> 
+          <hgroup>
+              <h2>{{site}}</h2>
+           </hgroup>   
            <div id="files"></div>
       </aside>                           
       <section>
@@ -40,39 +76,15 @@
           <textarea id="editor"></textarea>
       </section>
       <footer>
-            <a href="http://ringce.com/hyde">
-                Hyde - A Python Static Website Generator</a>
-            <a href="http://github.com/lakshmivyas/hyde">
-                Source on github</a>
-            <a href="http://groups.google.com/group/hyde-dev">
-                Google group</a>
+          <ul>      
+            <li><a rel="external" href="http://ringce.com/hyde">
+                Hyde</a></li>
+            <li><a rel="external" 
+            href="http://github.com/lakshmivyas/hyde">
+                Source</a></li>
+            <li><a rel="external"
+            href="http://groups.google.com/group/hyde-dev">
+                Discussions</a></li>
       </footer>  
-        <script type="text/javascript">
-              $(function(){  
-                 $("#editor").markItUp();  
-                 $("#files").tree({ 
-                     ui : { 
-                         dots: false,
-                         theme_name: "apple",
-                         theme_path: "{{static_url("jstree/themes/apple/style.css")}}"
-                     }, 
-                     types : {
-                         "file" : {
-                                    max_children : 0,
-                                    icon : { 
-                                        image : "{{static_url("jstree/themes/apple/file.png")}}"
-                                    }        
-                         }
-                     },
-                    data : {
-                        type: 'json',
-                        opts : {
-                                url: '/site/mysite/files'
-                        }
-                    }
-
-                 }); 
-              });
-          </script>  
   </body>
 </html>
