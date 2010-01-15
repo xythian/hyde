@@ -1,0 +1,39 @@
+body{
+    margin: 32px;
+    font-family: Helvetica, sans-serif;
+    font-size: 12px;
+}   
+
+header{
+    clear:both;
+    height: 96px;
+}      
+
+header h1{
+    font-weight: bold;    
+    font-size: 12px;    
+    float: left;
+}    
+
+nav{
+    float: right;
+    margin-right: 32px;
+}
+
+nav ul{
+    list-style-type:none;    
+}                        
+
+nav li{
+    float:left;       
+    margin:0 16px;
+}   
+
+aside{
+    float:left;
+    margin-right: 16px;
+}             
+
+section{
+    float:left;
+}

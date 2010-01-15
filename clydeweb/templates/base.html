@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Clyde - Hyde on the Cloud</title>
+    <link rel="stylesheet" href="{{static_url("clyde.css")}}" 
+        type="text/css" media="screen" charset="utf-8">        
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load("jquery", "1");
+        </script>                   
+        <script src="{{static_url("jstree/jquery.tree.min.js")}}" type="text/javascript" charset="utf-8"></script> 
+        <script src="{{static_url("markitup/jquery.markitup.pack.js")}}" type="text/javascript" charset="utf-8"></script> 
+        <script src="{{static_url("markitup/sets/default/set.js")}}" type="text/javascript" charset="utf-8"></script> 
+        
+        <link rel="stylesheet" type="text/css" href="{{static_url("markitup/skins/simple/style.css")}}" />
+        <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />                      
+      
+  </head>
+  <body>
+      <header>                              
+          <hgroup>
+              <h1>Clyde - Hyde on the Cloud</h1>
+          </hgroup>
+          <nav>
+            <ul> 
+                <li>Sites</li>
+                <li>Sign Out</li>
+            </ul>    
+          </nav>
+      </header>
+      <aside> 
+           <div id="files"></div>
+      </aside>                           
+      <section>
+          <p>
+            Select a file from the file navigator to the left to edit
+            or press the add button to create a new file. When done 
+            press the publish button if you are ready.
+          </p>
+          <textarea id="editor"></textarea>
+      </section>
+      <footer>
+            <a href="http://ringce.com/hyde">
+                Hyde - A Python Static Website Generator</a>
+            <a href="http://github.com/lakshmivyas/hyde">
+                Source on github</a>
+            <a href="http://groups.google.com/group/hyde-dev">
+                Google group</a>
+      </footer>  
+        <script type="text/javascript">
+              $(function(){  
+                 $("#editor").markItUp();  
+                 $("#files").tree({ 
+                     ui : { 
+                         dots: false,
+                         theme_name: "apple",
+                         theme_path: "{{static_url("jstree/themes/apple/style.css")}}"
+                     }, 
+                     types : {
+                         "file" : {
+                                    max_children : 0,
+                                    icon : { 
+                                        image : "{{static_url("jstree/themes/apple/file.png")}}"
+                                    }        
+                         }
+                     },
+                    data : {
+                        type: 'json',
+                        opts : {
+                                url: '/site/mysite/files'
+                        }
+                    }
+
+                 }); 
+              });
+          </script>  
+  </body>
+</html>

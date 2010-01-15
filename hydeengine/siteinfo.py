@@ -167,7 +167,24 @@ class SiteNode(object):
 
     def __repr__(self):
         return str(self.folder)
-      
+    
+    @property    
+    def simple_dict(self):
+        ress = []
+        for resource in self.walk_resources():
+            res = dict(
+                        name=resource.file.name,
+                        path=resource.file.path)
+            ress.append(res)
+        nodes = []
+        for node in self.children:
+            nodes.append(node.simple_dict)
+        return dict(
+                name=self.folder.name, 
+                path=self.folder.path,
+                resources=ress,
+                nodes=nodes)            
+   
     @property
     def isroot(self):
         return not self.parent
