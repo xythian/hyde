@@ -33,13 +33,21 @@
            </hgroup>   
            <div id="files"></div>
       </aside>                           
-      <section>
-          <p>
-            Select a file from the file navigator to the left to edit
-            or press the add button to create a new file. When done 
-            press the publish button if you are ready.
-          </p>
+      <section> 
+          <div id="crumbs">
+              <h2>Select a file</h2>
+              <div class="buttonbar">
+                <a id="new-button" class="button" href="/site/mysite/new">New</a>
+                <a id="save-button" class="button" href="/site/mysite/save">Save</a>
+                <a id="push-button" class="button" href="/site/mysite/push">Publish</a>                
+              </div>
+          </div> 
           <textarea id="editor"></textarea>
+           <p>
+              Select a file from the file navigator to the left to edit
+              or press the add button to create a new file. When done 
+              press the publish button if you are ready.
+            </p>
       </section>
       <footer>
           <ul>      
@@ -76,10 +84,10 @@
                           }
                       },
                       callback : {
-                          onchange: function(node, tree){                              
-                              $("#editor").load(
-                                  '/site/mysite/content?path=' + 
-                                  node.attributes.tooltip.value);                            
+                          onchange: function(node, tree){
+                              var path = node.attributes.tooltip.value;
+                              $("#crumbs h2").text(path);                              
+                              $("#editor").load('/site/mysite/content?path=' + path);                            
                           }
                       }
 

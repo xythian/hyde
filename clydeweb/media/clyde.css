@@ -69,18 +69,44 @@ table {
 
 .caps {
     font-variant: small-caps;
+}   
+
+.button{     
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  
+    font-weight: 300; 
+    font-size: 12px;
+     padding: 6px 10px; 
+     -webkit-border-radius: 8px 8px; 
+     -moz-border-radius: 8px 8px;     
+     border-radius: 8px 8px;          
+     border: solid 1px rgb(153, 153, 153); 
+     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(255, 255, 255)), to(rgb(221, 221, 221))); 
+     color: #333;
+     text-decoration: none; 
+     cursor: pointer; 
+     display: inline-block; 
+     text-align: center; 
+     text-shadow: 0px 1px 1px rgba(255,255,255,1);
+     line-height: 1; 
 }
+
+.button:hover {   
+    color:black;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(248, 248, 248)), to(rgb(221, 221, 221))); 
+}
+.button:active { background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(204, 204, 204)), to(rgb(221, 221, 221))); }
 
 em{
     padding-right: 4px;
 }
 
 body{
-    font-family: Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
     font-size: 12px;    
     line-height: 16px;
     width: 1024px;
-    margin:0 auto;
+    margin:0 auto;   
+    vertical-align: baseline;
 }   
 
 footer,
@@ -88,6 +114,7 @@ header{
     clear:both;
     height: 32px; 
     margin: 32px 0;     
+    padding-top: 4px;
 }      
    
 header{
@@ -101,7 +128,6 @@ footer{
 }       
 
 header h1{                
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 300;    
     font-size: 18px;    
     float: left;
@@ -112,7 +138,8 @@ nav{
 }
 
 nav ul{
-    list-style-type:none;    
+    list-style-type:none;
+    margin-top: 2px;    
 }                        
 
 footer li,
@@ -122,27 +149,61 @@ nav li{
 }   
 
 aside{
-    float:left;     
-    margin:0 32px;
+    float:left;
+    width: 250px;
 }   
 
+#crumbs > h2,
 aside h2{
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  margin-bottom: 16px;
-  font-weight: 300;
-}          
+  font-weight: 300;   
+  font-size: 16px;
+  padding-bottom: 16px;  
+  margin-bottom: 16px;  
+}         
+
+#crumbs,
+aside h2{
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+
+}       
+
+#crumbs{
+    height: 32px;
+    clear:both;
+}
+
+#crumbs h2{
+    float: left;                                                    
+}    
+
+#crumbs .buttonbar{
+    float: right; 
+    margin-top: -4px;
+}
+
+#crumbs .buttonbar .button{
+    margin-left: 4px;
+}
 
 section{
     float:left;   
     padding-left: 32px;
     width: 700px;
 }   
-#files a{
-    margin-bottom: 8px;
+
+#files{
+    padding-top: 4px;
+}
+
+#files li{
+    line-height: 24px;
 }   
 
+
+section .markItUp{
+    clear:both;
+}
 
 section .markItUpEditor{
     min-height: 700px;
