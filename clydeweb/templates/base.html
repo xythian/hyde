@@ -10,8 +10,7 @@
         </script>                   
         <script src="{{static_url("jstree/jquery.tree.min.js")}}" type="text/javascript" charset="utf-8"></script> 
         <script src="{{static_url("markitup/jquery.markitup.pack.js")}}" type="text/javascript" charset="utf-8"></script> 
-        <script src="{{static_url("markitup/sets/default/set.js")}}" type="text/javascript" charset="utf-8"></script> 
-        
+        <script src="{{static_url("markitup/sets/default/set.js")}}" type="text/javascript" charset="utf-8"></script>
         <link rel="stylesheet" type="text/css" href="{{static_url("markitup/skins/simple/style.css")}}" />
         <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />           
   </head>
@@ -38,7 +37,7 @@
               <h2>Select a file</h2>
               <div class="buttonbar">
                 <a id="new-button" class="button" href="/site/mysite/new">New</a>
-                <a id="save-button" class="button" href="/site/mysite/save">Save</a>
+                <a id="save-button" class="button" href="/site/mysite/content/save">Save</a>
                 <a id="push-button" class="button" href="/site/mysite/push">Publish</a>                
               </div>
           </div> 
@@ -60,9 +59,18 @@
             href="http://groups.google.com/group/hyde-dev">
                 Discussions</a></li>
       </footer>  
-      <script type="text/javascript">
+      <script type="text/javascript">  
+                var current_path = null;
                 $(function(){  
-                   $("#editor").markItUp();  
+                   $("#editor").markItUp();
+                   $("#save-button").unbind('click').bind('click', function(){
+                      if (!current_path) return false;   
+                      $.post('/site/mysite/content/save', {
+                          path: current_path,
+                          content: $("#editor").val()
+                      });
+                      return false;
+                   });
                    $("#files").tree({ 
                        ui : { 
                            dots: false,
@@ -85,9 +93,10 @@
                       },
                       callback : {
                           onchange: function(node, tree){
-                              var path = node.attributes.tooltip.value;
-                              $("#crumbs h2").text(path);                              
-                              $("#editor").load('/site/mysite/content?path=' + path);                            
+                              current_path = node.attributes.tooltip.value;  
+                              $("#crumbs h2").text(current_path);                              
+                              $("#editor").load(
+                                  '/site/mysite/content?path=' + encodeURIComponent(current_path));                            
                           }
                       }
 

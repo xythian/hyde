@@ -21,7 +21,8 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/site/([^/]+)", SiteHandler),           
             (r"/site/([^/]+/files)", FilesJSONHandler),
-            (r"/site/([^/]+/content)", ContentHandler),                       
+            (r"/site/([^/]+/content)", ContentHandler),
+            (r"/site/([^/]+/content/save)", SaveHandler),                                   
              
         ]
         opts = dict(                               
@@ -33,8 +34,9 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **opts)
 
 
-class BaseHandler(tornado.web.RequestHandler):
-    def get(self, site):
+class BaseHandler(tornado.web.RequestHandler): 
+
+    def init_site(self, site):
         if not hasattr(settings, 'siteinfo'):
             setup_env('/Users/lakshmivyas/mysite')
             setattr(settings, 'siteinfo', {})  
@@ -43,12 +45,20 @@ class BaseHandler(tornado.web.RequestHandler):
             siteinfo = SiteInfo(settings, '/Users/lakshmivyas/mysite')
             siteinfo.refresh()               
             settings.siteinfo[site] = siteinfo
-
+    
+    def get(self, site):
+        self.init_site(site)
         self.siteinfo = settings.siteinfo[site]
-        
         self.doget(site)
     
-    def doget(self, site): abstract
+    def doget(self, site): abstract           
+    
+    def post(self, site):  
+        self.init_site(site)
+        self.siteinfo = settings.siteinfo[site]
+        self.dopost(site)
+    
+    def dopost(self, site): abstract
 
 class FilesJSONHandler(BaseHandler):
     def doget(self, site):           
@@ -87,7 +97,16 @@ class ContentHandler(BaseHandler):
 class SiteHandler(tornado.web.RequestHandler):
     def get(self, site):
         self.render("clydeweb/templates/site.html", site=site)
-            
+
+class SaveHandler(BaseHandler):    
+    def dopost(self, site):
+        path = self.get_argument("path", None)
+        print path
+        if not path: return                        
+        content = self.get_argument("content", None)
+        print content
+        f = File(self.siteinfo.folder.child(path)) 
+        f.write(content)
 
 def main():
     tornado.options.parse_command_line()
