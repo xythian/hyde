@@ -76,11 +76,10 @@
                           }
                       },
                       callback : {
-                          onchange: function(node, tree){
+                          onchange: function(node, tree){                              
                               $("#editor").load(
-                                  alert("Hi");
-                                  '/site/mysite/content?' + 
-                                  node.attributes.tooltip);                            
+                                  '/site/mysite/content?path=' + 
+                                  node.attributes.tooltip.value);                            
                           }
                       }
 

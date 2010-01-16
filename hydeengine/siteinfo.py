@@ -172,16 +172,19 @@ class SiteNode(object):
     def simple_dict(self):
         ress = []
         for resource in self.walk_resources():
+            fragment =  Folder(
+                            resource.node.folder.get_fragment(
+                                self.site.folder.path)).child(resource.file.name)
             res = dict(
                         name=resource.file.name,
-                        path=resource.file.path)
+                        path=fragment)
             ress.append(res)
         nodes = []
         for node in self.children:
             nodes.append(node.simple_dict)
         return dict(
                 name=self.folder.name, 
-                path=self.folder.path,
+                path=self.folder.get_fragment(self.site.folder.path),
                 resources=ress,
                 nodes=nodes)            
    

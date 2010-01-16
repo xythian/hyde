@@ -12,6 +12,7 @@ from tornado.options import define, options
 from django.conf import settings         
 from hydeengine import setup_env
 from hydeengine.siteinfo import SiteInfo 
+from hydeengine.file_system import File, Folder
 
 define("port", default=8888, help="run on the given port", type=int)
 
@@ -19,7 +20,8 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/site/([^/]+)", SiteHandler),           
-            (r"/site/([^/]+/files)", FilesJSONHandler),           
+            (r"/site/([^/]+/files)", FilesJSONHandler),
+            (r"/site/([^/]+/content)", ContentHandler),                       
              
         ]
         opts = dict(                               
@@ -30,19 +32,31 @@ class Application(tornado.web.Application):
         )
         tornado.web.Application.__init__(self, handlers, **opts)
 
-class FilesJSONHandler(tornado.web.RequestHandler):
-    def get(self, site):           
+
+class BaseHandler(tornado.web.RequestHandler):
+    def get(self, site):
         if not hasattr(settings, 'siteinfo'):
             setup_env('/Users/lakshmivyas/mysite')
+            setattr(settings, 'siteinfo', {})  
+            
+        if not site in settings.siteinfo:                
             siteinfo = SiteInfo(settings, '/Users/lakshmivyas/mysite')
-            siteinfo.refresh()                                        
-            setattr(settings, 'siteinfo', siteinfo)
-        else:
-            siteinfo = settings.siteinfo    
-        d = siteinfo.content_node.simple_dict     
+            siteinfo.refresh()               
+            settings.siteinfo[site] = siteinfo
+
+        self.siteinfo = settings.siteinfo[site]
+        
+        self.doget(site)
+    
+    def doget(self, site): abstract
+
+class FilesJSONHandler(BaseHandler):
+    def doget(self, site):           
+        d = self.siteinfo.content_node.simple_dict     
         def jsresource(resource):
             return dict(
-                    attributes = dict(tooltip=resource['path'], rel='file'),
+                    attributes = dict(
+                        tooltip=resource['path'], rel='file'),
                     data = dict(title=resource['name'])
             )
         def jsnode(node):
@@ -52,14 +66,23 @@ class FilesJSONHandler(tornado.web.RequestHandler):
                                 for child_node in node['nodes']])  
             return dict(
                     attributes = dict(tooltip=node['path']),
-                    data = dict(title=node['name'],attributes=dict()),                
+                    data = dict(
+                        title=node['name'],attributes=dict()),                
                     children=children
                     )
         jsdict = jsnode(d)           
         jsdict['state'] = 'open'
         jsonobj = json.dumps(jsdict)    
         self.set_header("Content-Type", "application/json")
-        self.write(jsonobj)                                   
+        self.write(jsonobj)
+        
+
+class ContentHandler(BaseHandler):
+    def doget(self, site): 
+         path = self.get_argument("path", None)
+         if not path: return
+         f = File(self.siteinfo.folder.child(path))
+         self.write(f.read_all())           
         
 class SiteHandler(tornado.web.RequestHandler):
     def get(self, site):
