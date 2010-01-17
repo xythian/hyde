@@ -20,15 +20,20 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/site/([^/]+)", SiteHandler),           
-            (r"/site/([^/]+/files)", FilesJSONHandler),
-            (r"/site/([^/]+/content)", ContentHandler),
-            (r"/site/([^/]+/content/save)", SaveHandler),                                   
+            (r"/site/([^/]+)/files", FilesJSONHandler),
+            (r"/site/([^/]+)/content", ContentHandler),
+            (r"/site/([^/]+)/content/save", SaveHandler),                                   
              
         ]
         opts = dict(                               
             static_path = os.path.join(os.path.dirname(__file__), "clydeweb/media"),        
             sites = dict(
-               mysite = "/Users/lakshmivyas/mysite"
+               mysite = dict(
+                    path = "/Users/lakshmivyas/mysite",
+                    repo = "",
+                    draft_branch = "drafts",
+                    production_branch = "prod"
+               ) 
             )
         )
         tornado.web.Application.__init__(self, handlers, **opts)
@@ -37,25 +42,29 @@ class Application(tornado.web.Application):
 class BaseHandler(tornado.web.RequestHandler): 
 
     def init_site(self, site):
+        if not site in self.settings['sites']: 
+            raise Exception("Site [%s] is not configured." % (site, ))
+            
+        self.site_path = self.settings['sites'][site]["path"]    
         if not hasattr(settings, 'siteinfo'):
-            setup_env('/Users/lakshmivyas/mysite')
+            setup_env(self.site_path)
             setattr(settings, 'siteinfo', {})  
             
         if not site in settings.siteinfo:                
-            siteinfo = SiteInfo(settings, '/Users/lakshmivyas/mysite')
-            siteinfo.refresh()               
-            settings.siteinfo[site] = siteinfo
+            self.siteinfo = SiteInfo(settings, self.site_path)
+            self.siteinfo.refresh()               
+            settings.siteinfo[site] = self.siteinfo   
+        else:
+            self.siteinfo = settings.siteinfo[site]    
     
     def get(self, site):
         self.init_site(site)
-        self.siteinfo = settings.siteinfo[site]
         self.doget(site)
     
     def doget(self, site): abstract           
     
     def post(self, site):  
         self.init_site(site)
-        self.siteinfo = settings.siteinfo[site]
         self.dopost(site)
     
     def dopost(self, site): abstract
