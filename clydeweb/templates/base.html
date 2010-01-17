@@ -40,7 +40,7 @@
               <div class="buttonbar">
                 <a id="new-button" class="button" href="/site/{{site}}/new">New</a>
                 <a id="save-button" class="button" href="/site/{{site}}/content/save">Save</a>
-                <a id="push-button" class="button" href="/site/{{site}}/push">Publish</a>                
+                <a id="push-button" class="button" href="/site/{{site}}/publish">Publish</a>                
               </div>
           </div> 
           <textarea id="editor"></textarea>
@@ -102,6 +102,10 @@
                       });
                       return false;
                    });
+                   $("#push-button").unbind('click').bind('click', function(){
+                         $.post('/site/{{site}}/publish');
+                         return false;
+                      });
                    $("#files").tree({ 
                        ui : { 
                            dots: false,

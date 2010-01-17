@@ -13,7 +13,9 @@ from tornado.options import define, options
 from django.conf import settings         
 from hydeengine import setup_env
 from hydeengine.siteinfo import SiteInfo 
-from hydeengine.file_system import File, Folder
+from hydeengine.file_system import FileSystemEntity, File, Folder 
+
+from repos.dvcs import DVCS
 
 define("port", default=8888, help="run on the given port", type=int)
 define("sites", default="sites.yaml", help="yaml file with site definition", type=str)
@@ -25,7 +27,8 @@ class Application(tornado.web.Application):
             (r"/site/([^/]+)", SiteHandler),           
             (r"/site/([^/]+)/files", FilesJSONHandler),
             (r"/site/([^/]+)/content", ContentHandler),
-            (r"/site/([^/]+)/content/save", SaveHandler),                                   
+            (r"/site/([^/]+)/content/save", SaveHandler),
+            (r"/site/([^/]+)/publish", PublishHandler)                                   
              
         ]   
         sites = yaml.load(File(options.sites).read_all())
@@ -42,7 +45,8 @@ class BaseHandler(tornado.web.RequestHandler):
         if not site in self.settings['sites']: 
             raise Exception("Site [%s] is not configured." % (site, ))
             
-        self.site_path = self.settings['sites'][site]["path"]    
+        self.site_path = FileSystemEntity(
+                            self.settings['sites'][site]["path"]).humblepath    
         if not hasattr(settings, 'siteinfo'):
             setup_env(self.site_path)
             setattr(settings, 'siteinfo', {})  
@@ -116,7 +120,18 @@ class SaveHandler(BaseHandler):
         if not path: return                        
         content = self.get_argument("content", None)
         f = File(self.siteinfo.folder.child(path)) 
-        f.write(content)
+        f.write(content) 
+        
+        repo = self.settings['sites'][site]['repo']
+        dvcs = DVCS.load_dvcs(self.siteinfo.folder.path, repo)
+        dvcs.save_draft()          
+        
+class PublishHandler(BaseHandler):    
+    def dopost(self, site):
+        repo = self.settings['sites'][site]['repo']
+        dvcs = DVCS.load_dvcs(self.siteinfo.folder.path, repo)
+        dvcs.publish()        
+
 
 def main():
     tornado.options.parse_command_line()

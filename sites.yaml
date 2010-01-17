@@ -1,14 +1,14 @@
-site1: 
-        path: /Users/lakshmivyas/mysite
+clydetest: 
+        path: ~/clydetest
         repo:
-          type: git
+          type: repos.git.Git
           url: git@github.com:lakshmivyas/clydetest.git
-        draft_branch: drafts
-        production_branch: master
+          draft_branch: drafts
+          production_branch: master
 site2: 
-        path: /Users/lakshmivyas/mysite
+        path: ~/mysite
         repo:
-          type: git
+          type: repos.git.Git
           url: git@github.com:lakshmivyas/clydetest.git
-        draft_branch: drafts
-        production_branch: master     
+          draft_branch: drafts
+          production_branch: master     
