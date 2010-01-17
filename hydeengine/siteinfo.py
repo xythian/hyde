@@ -596,4 +596,3 @@ class SiteInfo(SiteNode):
                         "exception": False
                     })
                 resource.node.remove_resource(resource)
-                

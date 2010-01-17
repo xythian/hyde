@@ -21,11 +21,13 @@
           </hgroup>
           <nav>
             <ul> 
-                <li>Sites</li>
-                <li>Sign Out</li>
+                <li><a id="sites-button" href="/sites">Sites<span>&darr;</span></a></li>
+                <li><a id="signout-button" href="/signout">Sign Out</a></li>
             </ul>    
-          </nav>
-      </header>
+          </nav> 
+      </header>  
+      <nav id="sites">
+      </nav>
       <aside> 
           <hgroup>
               <h2>{{site}}</h2>
@@ -36,9 +38,9 @@
           <div id="crumbs">
               <h2>Select a file</h2>
               <div class="buttonbar">
-                <a id="new-button" class="button" href="/site/mysite/new">New</a>
-                <a id="save-button" class="button" href="/site/mysite/content/save">Save</a>
-                <a id="push-button" class="button" href="/site/mysite/push">Publish</a>                
+                <a id="new-button" class="button" href="/site/{{site}}/new">New</a>
+                <a id="save-button" class="button" href="/site/{{site}}/content/save">Save</a>
+                <a id="push-button" class="button" href="/site/{{site}}/push">Publish</a>                
               </div>
           </div> 
           <textarea id="editor"></textarea>
@@ -61,11 +63,40 @@
       </footer>  
       <script type="text/javascript">  
                 var current_path = null;
+                var sites = null;                 
                 $(function(){  
                    $("#editor").markItUp();
+                   $("#sites-button").unbind('click').bind('click', function(){
+                       if (!sites){ 
+                          $.getJSON('/sites', function(data){
+                              sites = data;
+                              var site_list = "<ol style=\"display:none\">";
+                              $(sites).each(function(i, site){    
+                                 site_list += "<li><a href=\"/site/";
+                                 site_list += site;
+                                 site_list += "\">"; 
+                                 site_list += site; 
+                                 site_list += "</a></li>";                                  
+                              });                                                         
+                              site_list += "</ol>";
+                              $("#sites").html(site_list);
+                              $("#sites ol").slideDown("slow");       
+                              $("#sites-button span").html("&uarr;"); 
+                          }); 
+                       }  else{
+                           $("#sites ol").slideToggle("slow", function(){
+                               if($(this).is(":hidden")){
+                                   $("#sites-button span").html("&darr;");
+                               } else {
+                                   $("#sites-button span").html("&uarr;");
+                               }
+                           });
+                       }  
+                       return false;
+                   });
                    $("#save-button").unbind('click').bind('click', function(){
                       if (!current_path) return false;   
-                      $.post('/site/mysite/content/save', {
+                      $.post('/site/{{site}}/content/save', {
                           path: current_path,
                           content: $("#editor").val()
                       });
@@ -88,7 +119,7 @@
                       data : {
                           type: 'json',
                           opts : {
-                                  url: '/site/mysite/files'
+                                  url: '/site/{{site}}/files'
                           }
                       },
                       callback : {
@@ -96,7 +127,7 @@
                               current_path = node.attributes.tooltip.value;  
                               $("#crumbs h2").text(current_path);                              
                               $("#editor").load(
-                                  '/site/mysite/content?path=' + encodeURIComponent(current_path));                            
+                                  '/site/{{site}}/content?path=' + encodeURIComponent(current_path));                            
                           }
                       }
 

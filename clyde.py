@@ -7,6 +7,7 @@ import tornado.options
 import tornado.web
 import simplejson as json
 import unicodedata
+import yaml
 
 from tornado.options import define, options                                                   
 from django.conf import settings         
@@ -15,26 +16,22 @@ from hydeengine.siteinfo import SiteInfo
 from hydeengine.file_system import File, Folder
 
 define("port", default=8888, help="run on the given port", type=int)
+define("sites", default="sites.yaml", help="yaml file with site definition", type=str)
 
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
+            (r"/sites", SitesJSONHandler),           
             (r"/site/([^/]+)", SiteHandler),           
             (r"/site/([^/]+)/files", FilesJSONHandler),
             (r"/site/([^/]+)/content", ContentHandler),
             (r"/site/([^/]+)/content/save", SaveHandler),                                   
              
-        ]
+        ]   
+        sites = yaml.load(File(options.sites).read_all())
         opts = dict(                               
-            static_path = os.path.join(os.path.dirname(__file__), "clydeweb/media"),        
-            sites = dict(
-               mysite = dict(
-                    path = "/Users/lakshmivyas/mysite",
-                    repo = "",
-                    draft_branch = "drafts",
-                    production_branch = "prod"
-               ) 
-            )
+            static_path = File(__file__).parent.child("clydeweb/media"),                    
+            sites = sites
         )
         tornado.web.Application.__init__(self, handlers, **opts)
 
@@ -68,6 +65,12 @@ class BaseHandler(tornado.web.RequestHandler):
         self.dopost(site)
     
     def dopost(self, site): abstract
+
+class SitesJSONHandler(tornado.web.RequestHandler):
+    def get(self):
+        d = self.settings['sites']
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps(sorted(d.keys())))
 
 class FilesJSONHandler(BaseHandler):
     def doget(self, site):           
@@ -110,10 +113,8 @@ class SiteHandler(tornado.web.RequestHandler):
 class SaveHandler(BaseHandler):    
     def dopost(self, site):
         path = self.get_argument("path", None)
-        print path
         if not path: return                        
         content = self.get_argument("content", None)
-        print content
         f = File(self.siteinfo.folder.child(path)) 
         f.write(content)
 
@@ -123,7 +124,5 @@ def main():
     http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
-
 if __name__ == "__main__":
     main()
-        
