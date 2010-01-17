@@ -26,6 +26,7 @@ You can start clyde by simply executing `python clyde.py` from the hyde director
 3. Allow generating the site for preview
 4. The site right now is unresponsive - No feedback, no indicators and no error messages.
 5. Allow uploading and replacing media files
+6. Sign In/Sign Out
 
 
 
