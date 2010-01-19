@@ -114,6 +114,16 @@ class SiteHandler(tornado.web.RequestHandler):
     def get(self, site):
         self.render("clydeweb/templates/site.html", site=site)
 
+class NewFileHandler(BaseHandler):    
+    def dopost(self, site):
+        path = self.get_argument("path", None)
+        if not path: return
+        f = File(self.siteinfo.folder.child(path)) 
+        f.write("")
+        repo = self.settings['sites'][site]['repo']
+        dvcs = DVCS.load_dvcs(self.siteinfo.folder.path, repo)
+        dvcs.add_file(path)
+
 class SaveHandler(BaseHandler):    
     def dopost(self, site):
         path = self.get_argument("path", None)

@@ -9,12 +9,13 @@ class DVCS(object):
         self.prod_branch = repo['production_branch'] 
         self.switch(self.draft_branch)                 
 
-    def save_draft(self): abstract
+    def save_draft(self, message=None): abstract
     def publish(self): abstract
     def pull(self): abstract
     def push(self, branch): abstract
     def commit(self, message): abstract
     def switch(self, branch): abstract
+    def add_file(self, path, message=None): abstract    
     def merge(self, branch): abstract
             
     @staticmethod     

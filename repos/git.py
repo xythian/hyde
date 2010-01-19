@@ -3,10 +3,19 @@ from subprocess import Popen, PIPE
 
 class Git(DVCS):
   
-    def save_draft(self): 
-        self.commit("Saved via clyde.")
+    def save_draft(self, message=None): 
+        self.commit(message or "Saved via clyde.")
         self.push(self.draft_branch)
-        
+     
+    def add_file(self, path, message=None):
+         cmd = Popen('git add "%s"' % path, 
+                        cwd=self.path, stdout=PIPE, shell=True)    
+         cmdresult = cmd.communicate()[0]
+         if cmd.returncode:
+            raise Exception(cmdresult)   
+            
+         self.commit(message or "Added file %s" % path)   
+            
     def publish(self):
         self.switch(self.prod_branch) 
         self.merge(self.draft_branch)

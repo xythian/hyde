@@ -10,7 +10,8 @@
         </script>                   
         <script src="{{static_url("jstree/jquery.tree.min.js")}}" type="text/javascript" charset="utf-8"></script> 
         <script src="{{static_url("markitup/jquery.markitup.pack.js")}}" type="text/javascript" charset="utf-8"></script> 
-        <script src="{{static_url("markitup/sets/default/set.js")}}" type="text/javascript" charset="utf-8"></script>
+        <script src="{{static_url("markitup/sets/hyde/base.js")}}" type="text/javascript" charset="utf-8"></script> 
+        
         <link rel="stylesheet" type="text/css" href="{{static_url("markitup/skins/simple/style.css")}}" />
         <link rel="stylesheet" type="text/css" href="{{static_url("markitup/sets/default/style.css")}}" />           
   </head>
@@ -29,19 +30,21 @@
       <nav id="sites">
       </nav>
       <aside> 
-          <hgroup>
+          <div id="header-bar">
+           <hgroup>
               <h2>{{site}}</h2>
            </hgroup>   
+            <div class="buttonbar">
+               <a id="new-file-button" class="button" href="/site/{{site}}/new-folder"><img title="New File" alt="New File" src="{{static_url("images/document--plus.png")}}"></a>
+               <a id="new-folder-button" class="button"  href="/site/{{site}}/new-file"><img title="New Folder" alt="New Folder" src="{{static_url("images/folder--plus.png")}}"></a>               
+               <a id="push-button" class="button" href="/site/{{site}}/publish"><img title="Publish" alt="Publish" src="{{static_url("images/network-cloud.png")}}"></a>                
+             </div>
+           </div>
            <div id="files"></div>
       </aside>                           
       <section> 
           <div id="crumbs">
-              <h2>Select a file</h2>
-              <div class="buttonbar">
-                <a id="new-button" class="button" href="/site/{{site}}/new">New</a>
-                <a id="save-button" class="button" href="/site/{{site}}/content/save">Save</a>
-                <a id="push-button" class="button" href="/site/{{site}}/publish">Publish</a>                
-              </div>
+              <h2>Select a file</h2>             
           </div> 
           <textarea id="editor"></textarea>
            <p>
@@ -59,13 +62,26 @@
                 Source</a></li>
             <li><a rel="external"
             href="http://groups.google.com/group/hyde-dev">
-                Discussions</a></li>
+                Discussions</a></li></ul>                                               
+                <br/><br/>
+           <p><a href="http://www.pinvoke.com">Fugue Icons</a> by Yusuke Kamiyamane.</p>
       </footer>  
       <script type="text/javascript">  
                 var current_path = null;
                 var sites = null;                 
+
+                var save_draft = function(){
+                      if (!current_path) return false;   
+                      $.post('/site/{{site}}/content/save', {
+                          path: current_path,
+                          content: $("#editor").val()
+                      });
+                      return false;
+                   }
+
                 $(function(){  
-                   $("#editor").markItUp();
+                    
+                   $("#editor").markItUp(getHydeSet(save_draft));
                    $("#sites-button").unbind('click').bind('click', function(){
                        if (!sites){ 
                           $.getJSON('/sites', function(data){
@@ -94,14 +110,7 @@
                        }  
                        return false;
                    });
-                   $("#save-button").unbind('click').bind('click', function(){
-                      if (!current_path) return false;   
-                      $.post('/site/{{site}}/content/save', {
-                          path: current_path,
-                          content: $("#editor").val()
-                      });
-                      return false;
-                   });
+                   
                    $("#push-button").unbind('click').bind('click', function(){
                          $.post('/site/{{site}}/publish');
                          return false;
@@ -129,7 +138,7 @@
                       callback : {
                           onchange: function(node, tree){
                               current_path = node.attributes.tooltip.value;  
-                              $("#crumbs h2").text(current_path);                              
+                              $("#crumbs h2").text("/" + current_path);                              
                               $("#editor").load(
                                   '/site/{{site}}/content?path=' + encodeURIComponent(current_path));                            
                           }
