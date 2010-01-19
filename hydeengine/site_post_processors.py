@@ -165,8 +165,7 @@ class FeedGenerator:
         raise TypeError('abstract function')
 
 RSS2_FEED = \
-"""
-<?xml version="1.0"?>
+"""<?xml version="1.0" encoding="UTF-8"?> 
 <rss version="2.0">
    <channel>
       <title>%(title)s</title>
@@ -180,8 +179,7 @@ RSS2_FEED = \
       <webMaster>%(webmaster)s</webMaster>
       %(items)s
    </channel>
-</rss>
-"""
+</rss>"""
 
 RSS2_ITEMS = \
 """    
@@ -226,24 +224,3 @@ class Rss2FeedGenerator(FeedGenerator):
         return RSS2_FEED % locals()
 
 
-class CategoriesArchiveGenerator:
-    @staticmethod
-    def process(folder, params):
-        node = params['node']
-        if hasattr(node, 'categories'):
-            categories = node.categories
-        else:
-            raise ValueError("No categories member on node %s" % (node))
-
-        output_folder = 'archives'
-        if hasattr(params, 'output_folder') and params.output_folder is not None \
-                and len(params.output_folder) > 0:
-            output_folder = params.output_folder
-        output_folder = os.path.join(output.CONTENT_DIR, output_folder)
-        if not os.path.isdir(output_folder):
-            os.makedirs(output_folder)
-
-        for category, posts in categories.iteritems():
-            #let customization provide a template in config accessing
-            #possible variables (post info, category info)
-            pass

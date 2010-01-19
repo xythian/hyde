@@ -1,6 +1,11 @@
+from __future__ import with_statement
 import sys
+import os
+import codecs
+import urllib
 from hydeengine.siteinfo import ContentNode
 from django.conf import settings
+from django.template.loader import render_to_string
 from hydeengine.file_system import Folder
 from siteinfo import SiteNode
 
@@ -15,6 +20,7 @@ class Category:
     def __init__(self):
         self.posts = set()
         self.feed_url = None
+        self.archive_url = None
     
     @property
     def posts(self):
@@ -23,6 +29,10 @@ class Category:
     @property
     def feed_url(self):
         return self.feed_url
+
+    @property
+    def archive_url(self):
+        return self.archive_url
 
     
 
@@ -51,6 +61,50 @@ class CategoriesManager:
                 setattr(post, 'categories', [settings.DEFAULT_CATEGORY])
         context['categories'] = categories 
         node.categories = categories
+
+class CategoriesArchiveGenerator:
+    @staticmethod
+    def process(folder, params):
+        node = params['node']
+        if hasattr(node, 'categories'):
+            categories = node.categories
+        else:
+            raise ValueError("No categories member on node %s" % (node))
+
+        #: defining the output folder - customisable
+        relative_folder = output_folder = 'archives'
+        if 'output_folder' in params and params['output_folder'] is not None \
+                and len(params['output_folder']) > 0:
+            relative_folder = output_folder = params['output_folder']
+        output_folder = os.path.join(settings.CONTENT_DIR, folder.name, output_folder)
+        if not os.path.isdir(output_folder):
+            os.makedirs(output_folder)
+
+        #: fetching default archive template
+        template = None
+        if 'template' in params:
+            template = os.path.join(settings.LAYOUT_DIR, params['template'])
+        else:
+            raise ValueError("No template reference in CategoriesArchiveGenerator's settings")
+
+        for name, category in categories.iteritems():
+            archive_resource = "%s.html" % urllib.quote_plus(name)
+            category.archive_url = "/%s/%s" % (folder.name, "%s/%s" % (relative_folder, archive_resource))
+
+        for category_name, category_obj in categories.iteritems():
+            name = urllib.quote_plus(category_name)
+            posts = category_obj.posts
+            archive_resource = "%s.html" % (name)
+            settings.CONTEXT.update({'category':category_name, 
+                                                 'posts': posts,
+                                                 'categories': categories})
+            output = render_to_string(template, settings.CONTEXT)
+            with codecs.open(os.path.join(output_folder, \
+                                 archive_resource), \
+                                 "w", "utf-8") as file:
+                file.write(output)
+            
+
         
 class NodeInjector(object):
     """

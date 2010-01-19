@@ -96,6 +96,9 @@ SITE_POST_PROCESSORS = {
 SITE_PRE_PROCESSORS = {
     'blog': {
         'hydeengine.site_pre_processors.CategoriesManager' : {},
+        'hydeengine.site_pre_processors.CategoriesArchiveGenerator' : {
+                'template': '_category.html',
+            },
     },
     '/': {
         'hydeengine.site_pre_processors.NodeInjector' : {

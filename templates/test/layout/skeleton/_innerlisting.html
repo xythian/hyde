@@ -2,10 +2,13 @@
 {% block all %}
 {%spaceless%}
 {%ifnotequal node page.node %}
+{%ifnotequal 'archives' node.name %}
 {% if node.has_listing %}<a href="{{node.listing_url}}">{% endif %}
 <h2>{{node.name|unslugify}}</h2>
 {% if node.has_listing %}</a>{% endif %}
 {%endifnotequal%}
+{%endifnotequal%}
+{%ifnotequal 'archives' node.name %}
 <ul>
     {% for list_page in node.pages %}
     {% ifnotequal list_page node.listing_page %}
@@ -21,5 +24,6 @@
         {%endif%}
     </li>{%endif%}{% endifnotequal %}{% endfor %}
 </ul>
+{%endifnotequal%}
 {%endspaceless%}
 {% endblock %}
