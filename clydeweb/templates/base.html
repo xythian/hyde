@@ -35,9 +35,12 @@
               <h2>{{site}}</h2>
            </hgroup>   
             <div class="buttonbar">
-               <a id="new-file-button" class="button" href="/site/{{site}}/new-folder"><img title="New File" alt="New File" src="{{static_url("images/document--plus.png")}}"></a>
-               <a id="new-folder-button" class="button"  href="/site/{{site}}/new-file"><img title="New Folder" alt="New Folder" src="{{static_url("images/folder--plus.png")}}"></a>               
-               <a id="push-button" class="button" href="/site/{{site}}/publish"><img title="Publish" alt="Publish" src="{{static_url("images/network-cloud.png")}}"></a>                
+               <a id="new-file-button" class="button" href="/site/{{site}}/new-file" title="New File"><img title="New File" alt="New File" src="{{static_url("images/document--plus.png")}}"></a>
+               <a id="new-folder-button" class="button"  href="/site/{{site}}/new-folder"  title="New Folder"><img title="New Folder" alt="New Folder" src="{{static_url("images/folder--plus.png")}}"></a>               
+               <a id="rename-button" class="button"  href="/site/{{site}}/rename"  title="Rename"><img title="Rename" alt="Rename" src="{{static_url("images/drive-rename.png")}}"></a>                
+               <a id="delete-button" class="button"  href="/site/{{site}}/delete"  title="Delete"><img title="Delete" alt="Delete" src="{{static_url("images/cross-button.png")}}"></a>                               
+               <a id="push-button" class="button" href="/site/{{site}}/publish" title="Publish"><img title="Publish" alt="Publish" src="{{static_url("images/network-cloud.png")}}"></a>
+               <a id="generate-button" class="button" href="/site/{{site}}/generate" title="Generate"><img title="Generate" alt="Generate" src="{{static_url("images/gear.png")}}"></a>                               
              </div>
            </div>
            <div id="files"></div>
@@ -81,7 +84,28 @@
 
                 $(function(){  
                     
-                   $("#editor").markItUp(getHydeSet(save_draft));
+                   $("#editor").markItUp(getHydeSet(save_draft));  
+                   $("#rename-button").unbind('click').bind('click', function(){
+                        var t = $.tree.focused(); 
+                        if (t.selected){
+                            t.rename(t.selected);
+                        }                        
+                        return false;
+                   });  
+                   
+                    $("#delete-button").unbind('click').bind('click', function(){
+                           var t = $.tree.focused(); 
+                           if (t.selected){
+                               t.remove(t.selected);
+                           }                        
+                           return false;
+                      });
+                   
+                   $("#generate-button").unbind('click').bind('click', function(){
+                       $.post('/site/{{site}}/generate');
+                       return false;
+                   });
+                   
                    $("#sites-button").unbind('click').bind('click', function(){
                        if (!sites){ 
                           $.getJSON('/sites', function(data){
@@ -114,7 +138,29 @@
                    $("#push-button").unbind('click').bind('click', function(){
                          $.post('/site/{{site}}/publish');
                          return false;
-                      });
+                      });    
+                   
+                   function newFileOrFolder(fileOrFolder){
+                        var t = $.tree.focused();  
+                        var name = fileOrFolder == "file" ? "new_file" : "new_folder/";
+                          if(t.selected){                             
+                              newNode = t.create({
+                                  attributes: {
+                                      rel:fileOrFolder,                                   
+                                      tooltip:t.selected.attr("tooltip") + name
+                                  }}, t.selected, 'inside');
+                          } 
+                          return false;
+                   }
+                   
+                   $("#new-folder-button").unbind('click').bind('click', function(){
+                         return newFileOrFolder("folder");
+                     }); 
+                    
+                     $("#new-file-button").unbind('click').bind('click', function(){
+                           return newFileOrFolder("file");
+                       });  
+                                          
                    $("#files").tree({ 
                        ui : { 
                            dots: false,
@@ -138,10 +184,42 @@
                       callback : {
                           onchange: function(node, tree){
                               current_path = node.attributes.tooltip.value;  
-                              $("#crumbs h2").text("/" + current_path);                              
-                              $("#editor").load(
-                                  '/site/{{site}}/content?path=' + encodeURIComponent(current_path));                            
-                          }
+                              $("#crumbs h2").text("/" + current_path);
+                              if (node.attributes.rel.value == 'file'){
+                                  $("#editor").show();
+                                  $("#editor").load(
+                                      '/site/{{site}}/content?path=' +
+                                       encodeURIComponent(current_path));                                  
+                              }  else {
+                                   $("#editor").val("");                                  
+                              }   
+                              
+                          },
+                         ondelete: function(node, tree, RB){
+                             var path = node.attributes.tooltip.value; 
+                             var type = tree.get_type(node);
+                             $.post('/site/{{site}}/delete?path=' 
+                                         + encodeURIComponent(path)
+                                         + "&type="
+                                         + type
+                                         );                             
+                         },   
+                         onrename: function(node, tree, RB){ 
+                            var originalPath =  node.attributes.tooltip.value;
+                            var path =  tree.parent(node).attr('tooltip')  + tree.get_text(node);                                              
+                            var type = tree.get_type(node);
+                            if (type == "folder"){
+                                path += "/";
+                            }
+                            $(node).attr("tooltip", path);
+                            $.post('/site/{{site}}/rename?path=' 
+                                    + encodeURIComponent(path)
+                                    + "&original_path="
+                                    + encodeURIComponent(originalPath) 
+                                    + "&type="
+                                    + type
+                                    );
+                         } 
                       }
 
                    }); 

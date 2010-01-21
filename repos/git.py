@@ -15,6 +15,7 @@ class Git(DVCS):
             raise Exception(cmdresult)   
             
          self.commit(message or "Added file %s" % path)   
+         self.push(self.draft_branch)
             
     def publish(self):
         self.switch(self.prod_branch) 

@@ -11,7 +11,7 @@ import yaml
 
 from tornado.options import define, options                                                   
 from django.conf import settings         
-from hydeengine import setup_env
+from hydeengine import setup_env, Generator
 from hydeengine.siteinfo import SiteInfo 
 from hydeengine.file_system import FileSystemEntity, File, Folder 
 
@@ -28,7 +28,10 @@ class Application(tornado.web.Application):
             (r"/site/([^/]+)/files", FilesJSONHandler),
             (r"/site/([^/]+)/content", ContentHandler),
             (r"/site/([^/]+)/content/save", SaveHandler),
-            (r"/site/([^/]+)/publish", PublishHandler)                                   
+            (r"/site/([^/]+)/publish", PublishHandler),
+            (r"/site/([^/]+)/rename", RenameHandler),
+            (r"/site/([^/]+)/delete", DeleteHandler),             
+            (r"/site/([^/]+)/generate", GenerateHandler),                                                          
              
         ]   
         sites = yaml.load(File(options.sites).read_all())
@@ -41,7 +44,7 @@ class Application(tornado.web.Application):
 
 class BaseHandler(tornado.web.RequestHandler): 
 
-    def init_site(self, site):
+    def init_site(self, site, force=False):
         if not site in self.settings['sites']: 
             raise Exception("Site [%s] is not configured." % (site, ))
             
@@ -51,7 +54,7 @@ class BaseHandler(tornado.web.RequestHandler):
             setup_env(self.site_path)
             setattr(settings, 'siteinfo', {})  
             
-        if not site in settings.siteinfo:                
+        if not site in settings.siteinfo or force:                
             self.siteinfo = SiteInfo(settings, self.site_path)
             self.siteinfo.refresh()               
             settings.siteinfo[site] = self.siteinfo   
@@ -91,7 +94,7 @@ class FilesJSONHandler(BaseHandler):
             children.append([jsnode(child_node)                 
                                 for child_node in node['nodes']])  
             return dict(
-                    attributes = dict(tooltip=node['path']),
+                    attributes = dict(tooltip=node['path'], rel='folder'),
                     data = dict(
                         title=node['name'],attributes=dict()),                
                     children=children
@@ -108,21 +111,59 @@ class ContentHandler(BaseHandler):
          path = self.get_argument("path", None)
          if not path: return
          f = File(self.siteinfo.folder.child(path))
+         if not f.exists: return
          self.write(f.read_all())           
         
 class SiteHandler(tornado.web.RequestHandler):
     def get(self, site):
         self.render("clydeweb/templates/site.html", site=site)
 
-class NewFileHandler(BaseHandler):    
+class GenerateHandler(BaseHandler):
+    def dopost(self, site):
+        Generator(self.site_path).generate()
+        
+class RenameHandler(BaseHandler):
     def dopost(self, site):
         path = self.get_argument("path", None)
-        if not path: return
-        f = File(self.siteinfo.folder.child(path)) 
-        f.write("")
+        original_path = self.get_argument("original_path", None)   
+        type = self.get_argument('type', None)
         repo = self.settings['sites'][site]['repo']
         dvcs = DVCS.load_dvcs(self.siteinfo.folder.path, repo)
-        dvcs.add_file(path)
+        if type == "file":                      
+            f = File(self.siteinfo.folder.child(original_path))
+            newf = File(self.siteinfo.folder.child(path))
+            if not f.exists:
+                newf.write("")
+                dvcs.add_file(newf)                
+            else:    
+                f.move_to(newf)
+                dvcs.add_file(newf, message="Renamed " + path)                    
+
+        else:                      
+            f = Folder(self.siteinfo.folder.child(original_path))
+            newf = Folder(self.siteinfo.folder.child(path))
+            if not f.exists:
+                newf.make()
+            else:    
+                f.move_to(newf)
+                dvcs.add_file(newf, message="Renamed " + path)                    
+        self.init_site(site, force=True)                            
+
+class DeleteHandler(BaseHandler):
+    def dopost(self, site):
+        path = self.get_argument("path", None)
+        type = self.get_argument('type', None)
+        repo = self.settings['sites'][site]['repo']
+        dvcs = DVCS.load_dvcs(self.siteinfo.folder.path, repo)
+        f = None
+        if type == "file":                      
+            f = File(self.siteinfo.folder.child(path))
+        else:    
+            f = Folder(self.siteinfo.folder.child(path))
+
+        f.delete()
+        dvcs.save_draft()
+        self.init_site(site, force=True) 
 
 class SaveHandler(BaseHandler):    
     def dopost(self, site):
