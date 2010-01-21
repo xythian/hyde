@@ -21,11 +21,11 @@ You can start clyde by simply executing `python clyde.py` from the hyde director
 
 ## Next Steps
 
-1. Create New Files.
+1. <del>Create New Files.</del>
 2. Allow uploading and replacing media files
 3. Create commands(sets) for `markitup` editor for Hyde specific commands
 4. Add client side scripts for better file detection and `markitup` initialization
-5. Allow generating the site for preview
+5. <del>Allow generating the site for preview</del>
 6. The site right now is unresponsive - No feedback, no indicators and no error messages.
 7. Sign In/Sign Out
 
