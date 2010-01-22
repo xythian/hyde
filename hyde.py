@@ -8,7 +8,7 @@ from hydeengine import Generator, Initializer, Server
 
 #import cProfile
 
-PROG_ROOT = os.path.dirname(os.path.abspath( __file__ ))
+PROG_ROOT = os.path.dirname(os.path.realpath( __file__ ))
 
 def main(argv):
     

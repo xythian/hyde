@@ -140,7 +140,6 @@ class ContentNodeAdapter:
         for post in self.category.posts:
             yield post
 
-
 class FeedGenerator:
     """
     Base abstract class for the generation of syndication feeds
@@ -223,4 +222,34 @@ class Rss2FeedGenerator(FeedGenerator):
         webmaster = settings.SITE_AUTHOR_EMAIL
         return RSS2_FEED % locals()
 
+class WhiteSpaceVisitor(object):
+    def __init__(self, **kw):
+        self.operations = []
+        del kw['node']
+        for k,v in kw.items():
+            if v == True and hasattr(self, k):
+                self.operations.append(getattr(self, k))
+            elif not hasattr(self, k):
+                raise Exception("Unknown WhiteSpaceRemover operation: %s" % k)
 
+    def visit_file(self, a_file):
+        for oper in self.operations:
+            oper(a_file)
+
+    def remove_document_leading_whitespace(self, a_file):
+        lines = a_file.read_all().splitlines()
+        while lines[0] == '':
+            lines.pop(0)
+        a_file.write(unicode("\n".join(lines), 'utf8'))
+
+class WhiteSpaceRemover:
+    @staticmethod
+    def process(folder, params):
+        visitor = WhiteSpaceVisitor(**params)
+
+        extensions = ['html', 'xml']
+        if params.has_key('extensions'):
+            extensions = params['extensions']
+
+        for ext in extensions:
+            folder.walk(visitor, '*.%s' % ext)

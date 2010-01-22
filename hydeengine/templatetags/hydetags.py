@@ -87,6 +87,7 @@ class LatestExcerptNode(template.Node):
             return ""                    
             
 class RecentPostsNode(template.Node):
+
     def __init__(self, var='recent_posts', count=5, node=None, categories=None):
         self.var = var
         self.count = count        

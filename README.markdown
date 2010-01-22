@@ -31,6 +31,7 @@ The hyde engine has three entry points:
     
     Be careful with the -f setting, though: it will overwrite your website.
 
+
 2. Generator
 
         python hyde.py -g -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy] [-k]
@@ -136,6 +137,18 @@ You need to install Less (see [the project website][lesscss]) and set the ``LESS
 
 [lesscss]: http://lesscss.org/
 
+#### Thumbnail Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.Thumbnail'`` and creates small "thumbnailed" copies. The aspect ratios of the images will be preserved.
+
+You need to install the [Python Imaging Library][PIL] with the ``sudo easy_install PIL`` command.
+
+You also need to set the ``THUMBNAIL_MAX_WIDTH`` and ``THUMBNAIL_MAX_HEIGHT`` variables.
+
+You can set the ``THUMBNAIL_FILENAME_POSTFIX`` to change the string that is appended to the filename of thumbnails. By default this is ``-thumb`` (i.e. the thumbnail of ``my-image.png`` will be called ``my-image-thumb.png``).
+
+[PIL]: http://www.pythonware.com/products/pil/
+
 ### Content Processors
 
 Content processors are run against all files in the content folder whereas the media processors are run against the media folder. No content processors have been created yet.
@@ -160,7 +173,6 @@ On your content pages you can define the page variables using the standard YAML 
             - Two
             - Three
     %}
-
 
 ## Template Tags
 
@@ -268,6 +280,17 @@ a code syntax highlighter. Usage is:
     return [obj autorelease];
     {% endsyntax %}
 
+To generate the corresponding CSS, first list the available styles
+
+    python
+    >>> from pygments.styles import get_all_styles
+    >>> list(get_all_styles())
+    ['manni', 'perldoc', 'borland', 'colorful', 'default', 'murphy', 'vs', 'trac', 'tango', 'fruity', 'autumn', 'bw', 'emacs', 'pastie', 'friendly', 'native']
+
+Then choose a style and generate a style sheet
+
+    pygmentize -f html -S native -a .highlight > pygments.css
+
 They are both intended to make writing static content
 quicker and less painful.
 
@@ -310,9 +333,14 @@ The default site layout contains templates for basic site structure, navigation,
 
 # Examples
 
-The [Ringce][ringce] website source is available as a reference implementation.
+The following websites are built using hyde and are open sourced. 
 
+* [SteveLosh.com][stevelosh]
+* [The Old Ringce Website][ringce]
+
+[stevelosh]:http://github.com/sjl/stevelosh
 [ringce]:http://github.com/lakshmivyas/ringce
+
 
 # CONTRIBUTORS
 
@@ -329,4 +357,6 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [James Clarke](http://github.com/jc)
 - [Benjamin Pollack](http://github.com/bpollack)   
 - [Andrey](http://github.com/andrulik)   
-- [Toby White](http://github.com/tow)  
+- [Toby White](http://github.com/tow)
+- [Tim Freund](http://github.com/timfreund)
+- [Russell H](http://github.com/russellhaering)

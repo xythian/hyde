@@ -16,7 +16,6 @@ SITE_ROOT = "/"
 SITE_WWW_URL = "http://www.yoursite.com"
 SITE_NAME = "Your Site"
 SITE_AUTHOR = "Your Name"
-SITE_ROOT = "/"
 
 #Url Configuration
 GENERATE_ABSOLUTE_FS_URLS = False

@@ -133,7 +133,7 @@ class Server(object):
             for page in site.walk_pages(): # build url to file mapping
                 if page.listing and page.file.name_without_extension not in \
                    (settings.LISTING_PAGE_NAMES + [page.node.name]):
-                    filename = os.path.join(settings.DEPLOY_DIR, page.name)
+                    filename = page.target_file.path
                     url = page.url.strip('/')
                     url_file_mapping[url] = filename
         
@@ -182,8 +182,14 @@ class Server(object):
 
         # even if we're still using clean urls, we still need to serve media.
         if settings.GENERATE_CLEAN_URLS:
-            conf = {'/media': {
-            'tools.staticdir.dir':os.path.join(deploy_folder.path, 'media'),
+            media_web_path = '/%s/media' % settings.SITE_ROOT.strip('/')
+            # if SITE_ROOT is /, we end up with //media
+            media_web_path = media_web_path.replace('//', '/')
+            
+            conf = {media_web_path: {
+            'tools.staticdir.dir':os.path.join(deploy_folder.path,
+                                               settings.SITE_ROOT.strip('/'),
+                                               'media'),
             'tools.staticdir.on':True
             }}
         else:
@@ -241,7 +247,7 @@ class Generator(object):
                 subprocess.call([settings.GROWL, "-n", "Hyde", "-t", title, "-m", message])        
             except:
                 pass    
-        
+
     def pre_process(self, node):
         self.processor.pre_process(node)
         
@@ -320,7 +326,7 @@ class Generator(object):
                 # immedietely since other changes may be under way.
                 
                 # Another request coming in renews the initil request.
-                # When there are no more requests, we go ahead and process
+                # When there are no more requests, we go are and process
                 # the event.
                 if not self.regenerate_request.isSet() and pending:
                     pending = False
