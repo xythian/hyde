@@ -48,17 +48,12 @@ class CategoriesManager:
         site = context['site']    
         node = params['node'] 
         categories = {}                                      
-        for post in node.walk_pages():           
+        for post in node.walk_pages():
             if hasattr(post, 'categories') and post.categories != None:
                 for category in post.categories:
                     if categories.has_key(category) is False:
                         categories[category] = Category()
                     categories[category].posts.add(post)  
-            elif hasattr(settings, 'DEFAULT_CATEGORY'):
-                if categories.has_key(settings.DEFAULT_CATEGORY) is False:
-                    categories[settings.DEFAULT_CATEGORY] = Category()   
-                categories[settings.DEFAULT_CATEGORY].posts.add(post)
-                setattr(post, 'categories', [settings.DEFAULT_CATEGORY])
         context['categories'] = categories 
         node.categories = categories
 
@@ -90,6 +85,8 @@ class CategoriesArchiveGenerator:
         for name, category in categories.iteritems():
             archive_resource = "%s.html" % urllib.quote_plus(name)
             category.archive_url = "/%s/%s" % (folder.name, "%s/%s" % (relative_folder, archive_resource))
+            
+        node.categories = categories
 
         for category_name, category_obj in categories.iteritems():
             name = urllib.quote_plus(category_name)
@@ -103,8 +100,6 @@ class CategoriesArchiveGenerator:
                                  archive_resource), \
                                  "w", "utf-8") as file:
                 file.write(output)
-            
-
         
 class NodeInjector(object):
     """
