@@ -3,6 +3,7 @@ import sys
 import os
 import codecs
 import urllib
+import operator
 from hydeengine.siteinfo import ContentNode
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -18,7 +19,7 @@ from siteinfo import SiteNode
 
 class Category:
     def __init__(self):
-        self.posts = set()
+        self.posts = []
         self.feed_url = None
         self.archive_url = None
     
@@ -37,7 +38,6 @@ class Category:
     
 
 class CategoriesManager:   
-    
     """
     Fetch the category(ies) from every post under the given node
     and creates a reference on them in CONTEXT and the node.
@@ -53,7 +53,8 @@ class CategoriesManager:
                 for category in post.categories:
                     if categories.has_key(category) is False:
                         categories[category] = Category()
-                    categories[category].posts.add(post)  
+                    categories[category].posts.append(post)  
+                    categories[category].posts.sort(key=operator.attrgetter("created"), reverse=True)
         context['categories'] = categories 
         node.categories = categories
 
