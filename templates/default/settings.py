@@ -16,7 +16,6 @@ SITE_ROOT = "/"
 SITE_WWW_URL = "http://www.yoursite.com"
 SITE_NAME = "Your Site"
 SITE_AUTHOR = "Your Name"
-SITE_ROOT = "/"
 
 #Url Configuration
 GENERATE_ABSOLUTE_FS_URLS = False
@@ -59,6 +58,12 @@ MEDIA_PROCESSORS = {
         '.ccss':('hydeengine.media_processors.TemplateProcessor',
                 'hydeengine.media_processors.CleverCSS',
                 'hydeengine.media_processors.YUICompressor',),
+        '.sass':('hydeengine.media_processors.TemplateProcessor',
+                'hydeengine.media_processors.SASS',
+                'hydeengine.media_processors.YUICompressor',),                
+        '.less':('hydeengine.media_processors.TemplateProcessor',
+                'hydeengine.media_processors.LessCSS',
+                'hydeengine.media_processors.YUICompressor',),                
         '.hss':(
                 'hydeengine.media_processors.TemplateProcessor',
                 'hydeengine.media_processors.HSS',
@@ -95,13 +100,26 @@ FILTER = {
 }        
 
 
-#Processor Configuration
+#Processor Configuration 
+
+# 
+#  Set this to the output of `which growlnotify`. If `which`  returns emtpy,
+#  install growlnotify from the Extras package that comes with the Growl disk image.
+# 
+#
+GROWL = None
 
 # path for YUICompressor, or None if you don't
 # want to compress JS/CSS. Project homepage:
 # http://developer.yahoo.com/yui/compressor/
 YUI_COMPRESSOR = "./lib/yuicompressor-2.4.1.jar"
 #YUI_COMPRESSOR = None 
+
+# path for Closure Compiler, or None if you don't
+# want to compress JS/CSS. Project homepage:
+# http://closure-compiler.googlecode.com/
+#CLOSURE_COMPILER = "./lib/compiler.jar"
+CLOSURE_COMPRILER = None 
 
 # path for HSS, which is a preprocessor for CSS-like files (*.hss)
 # project page at http://ncannasse.fr/projects/hss

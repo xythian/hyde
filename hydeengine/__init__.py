@@ -8,6 +8,7 @@ import sys
 import shutil
 import thread
 import threading
+import subprocess
 
 from collections import defaultdict
 from datetime import datetime
@@ -35,7 +36,7 @@ class _HydeDefaults:
     CONTENT_PROCESSORS = {}
     SITE_PRE_PROCESSORS = {}
     SITE_POST_PROCESSORS = {}
-    CONTEXT = {'blog': {}}
+    CONTEXT = {}
 
 def setup_env(site_path):
     """    
@@ -132,7 +133,7 @@ class Server(object):
             for page in site.walk_pages(): # build url to file mapping
                 if page.listing and page.file.name_without_extension not in \
                    (settings.LISTING_PAGE_NAMES + [page.node.name]):
-                    filename = os.path.join(settings.DEPLOY_DIR, page.name)
+                    filename = page.target_file.path
                     url = page.url.strip('/')
                     url_file_mapping[url] = filename
         
@@ -181,8 +182,14 @@ class Server(object):
 
         # even if we're still using clean urls, we still need to serve media.
         if settings.GENERATE_CLEAN_URLS:
-            conf = {'/media': {
-            'tools.staticdir.dir':os.path.join(deploy_folder.path, 'media'),
+            media_web_path = '/%s/media' % settings.SITE_ROOT.strip('/')
+            # if SITE_ROOT is /, we end up with //media
+            media_web_path = media_web_path.replace('//', '/')
+            
+            conf = {media_web_path: {
+            'tools.staticdir.dir':os.path.join(deploy_folder.path,
+                                               settings.SITE_ROOT.strip('/'),
+                                               'media'),
             'tools.staticdir.on':True
             }}
         else:
@@ -232,8 +239,15 @@ class Generator(object):
         self.watcher = Thread(target=self.__watch__)
         self.regenerator = Thread(target=self.__regenerate__)
         self.processor = Processor(settings)
-        self.quitting = False
-    
+        self.quitting = False                                        
+
+    def notify(self, title, message):     
+        if hasattr(settings, "GROWL") and settings.GROWL and File(settings.GROWL).exists:
+            try:
+                subprocess.call([settings.GROWL, "-n", "Hyde", "-t", title, "-m", message])        
+            except:
+                pass    
+
     def pre_process(self, node):
         self.processor.pre_process(node)
         
@@ -274,19 +288,33 @@ class Generator(object):
     def post_process(self, node):
         self.processor.post_process(node)
     
-    def process_all(self):
-        self.pre_process(self.siteinfo)
-        for resource in self.siteinfo.walk_resources():
-            self.process(resource)
+    def process_all(self):     
+        self.notify(self.siteinfo.name, "Website Generation Started") 
+        try:
+            self.pre_process(self.siteinfo)
+            for resource in self.siteinfo.walk_resources():
+                self.process(resource)
+            self.complete_generation()
+        except:                                                  
+            print >> sys.stderr, "Generation Failed"
+            print >> sys.stderr, sys.exc_info()
+            self.notify(self.siteinfo.name, "Generation Failed")
+            return
+        self.notify(self.siteinfo.name, "Generation Complete")               
+        
+    def complete_generation(self):
         self.post_process(self.siteinfo)
         self.siteinfo.target_folder.copy_contents_of(
                self.siteinfo.temp_folder, incremental=True)
+        if(hasattr(settings, "post_deploy")):
+            settings.post_deploy()  
     
     def __regenerate__(self):
         pending = False
         while True:
             try:
-                if self.quit_event.isSet():
+                if self.quit_event.isSet():     
+                    self.notify(self.siteinfo.name, "Exiting Regenerator")
                     print "Exiting regenerator..."
                     break
                 
@@ -298,7 +326,7 @@ class Generator(object):
                 # immedietely since other changes may be under way.
                 
                 # Another request coming in renews the initil request.
-                # When there are no more requests, we go ahead and process
+                # When there are no more requests, we go are and process
                 # the event.
                 if not self.regenerate_request.isSet() and pending:
                     pending = False
@@ -308,16 +336,21 @@ class Generator(object):
                     self.regeneration_complete.clear()
                     pending = True
                     self.regenerate_request.clear()
-            except:
-                self.quit()
-                raise
+            except:                 
+                print >> sys.stderr, "Error during regeneration"
+                print >> sys.stderr, sys.exc_info()
+                self.notify(self.siteinfo.name, "Error during regeneration")
+                self.regeneration_complete.set()
+                self.regenerate_request.clear()
+                pending = False
     
     def __watch__(self):
         regenerating = False
         while True:
             try:
                 if self.quit_event.isSet():
-                    print "Exiting watcher..."
+                    print "Exiting watcher..."    
+                    self.notify(self.siteinfo.name, "Exiting Watcher")                    
                     break
                 try:
                     pending = self.queue.get(timeout=10)
@@ -327,7 +360,8 @@ class Generator(object):
                 self.queue.task_done()
                 if pending.setdefault("exception", False):
                     self.quit_event.set()
-                    print "Exiting watcher"
+                    print "Exiting watcher"     
+                    self.notify(self.siteinfo.name, "Exiting Watcher")                    
                     break
                 
                 if 'resource' in pending:
@@ -347,13 +381,17 @@ class Generator(object):
                     self.regenerate_request.set()
                     continue
                 
+                self.notify(self.siteinfo.name, "Processing " + resource.name)                                     
                 if self.process(resource, pending['change']):
-                    self.post_process(resource.node)
-                    self.siteinfo.target_folder.copy_contents_of(
-                        self.siteinfo.temp_folder, incremental=True)
-            except:
-                self.quit()
-                raise
+                    self.complete_generation()   
+                    self.notify(self.siteinfo.name, "Completed processing " + resource.name)                                                                                      
+            except:  
+                print >> sys.stderr, "Error during regeneration"
+                print >> sys.stderr, sys.exc_info()      
+                self.notify(self.siteinfo.name, "Error during regeneration")
+                self.regeneration_complete.set()
+                self.regenerate_request.clear()
+                regenerating = False
 
     
     def generate(self, deploy_path=None, 
@@ -375,7 +413,6 @@ class Generator(object):
                 self.siteinfo.monitor(self.queue)
             except (KeyboardInterrupt, IOError, SystemExit):
                 self.quit()
-                raise
             except:
                 self.quit()
                 raise
@@ -390,7 +427,6 @@ class Generator(object):
             self.siteinfo.dont_monitor()
         except (KeyboardInterrupt, IOError, SystemExit):
             self.quit()
-            raise
         except:
             self.quit()
             raise
@@ -399,7 +435,8 @@ class Generator(object):
         if self.quitting:
             return
         self.quitting = True
-        print "Shutting down..."
+        print "Shutting down..."    
+        self.notify(self.siteinfo.name, "Shutting Down")        
         self.siteinfo.dont_monitor()
         self.quit_event.set()
         if self.exit_listner:

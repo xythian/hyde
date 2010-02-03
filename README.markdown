@@ -1,6 +1,6 @@
 # HYDE
 
-0.3 Beta
+0.4
 
 This document should give enough information to get you up and running. Check the [wiki](http://wiki.github.com/lakshmivyas/hyde) for detailed documentation.
 
@@ -31,13 +31,16 @@ The hyde engine has three entry points:
     
     Be careful with the -f setting, though: it will overwrite your website.
 
+
 2. Generator
 
         python hyde.py -g -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy] [-k]
     
     This will process the content and media and copy the generated website to your deploy directory. 
 
-    If the -k option is specified, hyde will monitor the source folder for changes and automatically process them when the changes are encountered. This option is very handy when tweaking css or markup to quickly check the results. Note of caution: This option does not update listing files or excerpt files. It is recommended that you run -g again before you deploy the website.
+    If the -k option is specified, hyde will monitor the source folder for changes and automatically process them when the changes are encountered. This option is very handy when tweaking css or markup to quickly check the results. Note of caution: This option does not update listing files or excerpt files. It is recommended that you run -g again before you deploy the website.  
+    
+    If you are on Mac OS X and would like to get Growl notifications, just set the GROWL setting to the `growlnotify` script path.
 
 3. Web Server
 
@@ -93,6 +96,15 @@ Runs through the all the files defined in the configuration associated with ``'h
 In the settings file, set ``YUI_COMPRESSOR`` to
 be a path to a [YUI Compressor][yuic] jar on your computer.
 
+#### Closure Compiler
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.ClosureCompiler'`` and compresses them. 
+
+[closure]: http://closure-compiler.googlecode.com/
+
+In the settings file, set ``CLOSURE_COMPILER`` to
+be a path to a [Closure Compiler][closure] jar on your computer.
+
 #### Clever CSS Processor
 
 Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.CleverCSS'`` and converts them to css. 
@@ -108,6 +120,34 @@ Runs through the all the files defined in the configuration associated with ``'h
 You need to download HSS from [the project website][hss] and set the ``HSS_PATH`` variable to the downloaded path. A version for OS X is installed in the ``lib`` folder by default. To use it, just uncomment the ``HSS_PATH`` line in the settings.py file of your template.
 
 [hss]: http://ncannasse.fr/projects/hss
+
+#### SASS Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.SASS'`` and converts them to css. 
+
+You need to install SASS (see [the project website][sass]) and set the ``SASS_PATH`` variable to the path to the ``sass`` script.
+
+[sass]: http://sass-lang.com/   
+
+#### Less CSS Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.LessCSS'`` and converts them to css. 
+
+You need to install Less (see [the project website][lesscss]) and set the ``LESS_CSS_PATH`` variable to the path to the ``lessc`` script.
+
+[lesscss]: http://lesscss.org/
+
+#### Thumbnail Processor
+
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.Thumbnail'`` and creates small "thumbnailed" copies. The aspect ratios of the images will be preserved.
+
+You need to install the [Python Imaging Library][PIL] with the ``sudo easy_install PIL`` command.
+
+You also need to set the ``THUMBNAIL_MAX_WIDTH`` and ``THUMBNAIL_MAX_HEIGHT`` variables.
+
+You can set the ``THUMBNAIL_FILENAME_POSTFIX`` to change the string that is appended to the filename of thumbnails. By default this is ``-thumb`` (i.e. the thumbnail of ``my-image.png`` will be called ``my-image-thumb.png``).
+
+[PIL]: http://www.pythonware.com/products/pil/
 
 ### Content Processors
 
@@ -133,7 +173,6 @@ On your content pages you can define the page variables using the standard YAML 
             - Two
             - Three
     %}
-
 
 ## Template Tags
 
@@ -181,6 +220,50 @@ It is used as follows:
     {% endtextile %}
 
 
+### reStructuredText
+
+Requires docutils to be installed.
+
+    sudo easy_install docutils
+
+``restructuredtext`` renders the enclosed text as [reStructuredText](http://docutils.sourceforge.net/rst.html) markup.
+It is used as follows:
+
+    <p> I love templates. </p>
+    {% restructuredtext %}
+    Render this **content all in reStructuredText**.
+
+         Writing in reStructuredText is also quicker than
+         writing in HTML.
+
+    #. Or at least that is my opinion.
+    #. What about you?
+    
+    {% endrestructuredtext %}
+
+
+### asciidoc
+
+Requires asciidoc to be installed.
+
+``asciidoc`` renders the enclosed text as [asciidoc](http://www.methods.co.nz/asciidoc/) markup.
+It is used as follows:
+
+    <p> I love templates. </p>
+    {% asciidoc %}
+    Render this *content all in asciidoc*.
+
+    ________________________________________
+    Writing in asciidoc is also quicker than
+    writing in HTML.
+    ________________________________________
+
+    . Or at least that is my opinion.
+    . What about you?
+
+    {% endasciidoc %}
+
+
 ### Syntax
 
 Requires Pygments.
@@ -196,6 +279,17 @@ a code syntax highlighter. Usage is:
     [obj addObject:[NSNumber numberWithInt:53]];
     return [obj autorelease];
     {% endsyntax %}
+
+To generate the corresponding CSS, first list the available styles
+
+    python
+    >>> from pygments.styles import get_all_styles
+    >>> list(get_all_styles())
+    ['manni', 'perldoc', 'borland', 'colorful', 'default', 'murphy', 'vs', 'trac', 'tango', 'fruity', 'autumn', 'bw', 'emacs', 'pastie', 'friendly', 'native']
+
+Then choose a style and generate a style sheet
+
+    pygmentize -f html -S native -a .highlight > pygments.css
 
 They are both intended to make writing static content
 quicker and less painful.
@@ -239,9 +333,14 @@ The default site layout contains templates for basic site structure, navigation,
 
 # Examples
 
-The [Ringce][ringce] website source is available as a reference implementation.
+The following websites are built using hyde and are open sourced. 
 
-[ringce]:http://github.com/lakshmivyas/ringce/tree/master
+* [SteveLosh.com][stevelosh]
+* [The Old Ringce Website][ringce]
+
+[stevelosh]:http://github.com/sjl/stevelosh
+[ringce]:http://github.com/lakshmivyas/ringce
+
 
 # CONTRIBUTORS
 
@@ -252,3 +351,12 @@ The [Ringce][ringce] website source is available as a reference implementation.
 - [Tom von Schwerdtner](http://github.com/tvon)
 - [montecristo](http://github.com/montecristo)
 - [Valentin Jacquemin](http://github.com/poxd)
+- [Johannes Reinhard](http://github.com/SpeckFleck)
+- [Steve Losh](http://github.com/sjl)
+- [William Amberg](http://github.com/wamberg)          
+- [James Clarke](http://github.com/jc)
+- [Benjamin Pollack](http://github.com/bpollack)   
+- [Andrey](http://github.com/andrulik)   
+- [Toby White](http://github.com/tow)
+- [Tim Freund](http://github.com/timfreund)
+- [Russell H](http://github.com/russellhaering)

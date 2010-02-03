@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template import Template
 from django.template.loader import render_to_string
 from django.template.defaultfilters import truncatewords_html
+from django.template.loader_tags import do_include
 from django.template import Library
 from django.utils.safestring import mark_safe
 from hydeengine.file_system import Folder
@@ -16,7 +17,7 @@ from hydeengine.file_system import Folder
 
 
 marker_start = "<!-- Hyde::%s::Begin -->\n"
-marker_end = "<!-- Hyde::%s::End -->\n"
+marker_end = "<!-- Hyde::%s::End -->"
 
 register = Library()
 
@@ -35,7 +36,7 @@ def hyde_context(parser, token):
 def excerpt(parser, token):
     nodelist = parser.parse(('endexcerpt',))
     parser.delete_first_token()
-    return BracketNode("Excerpt", nodelist)
+    return BracketNode("Excerpt", nodelist)    
     
 @register.tag(name="article")
 def excerpt(parser, token):
@@ -86,33 +87,44 @@ class LatestExcerptNode(template.Node):
             return ""                    
             
 class RecentPostsNode(template.Node):
-    def __init__(self, var='recent_posts', count=5, node=None):
+
+    def __init__(self, var='recent_posts', count=5, node=None, categories=None):
         self.var = var
         self.count = count        
-        self.node=node                    
+        self.node=node
+        self.categories = categories
                 
-    def render(self, context):             
+    def render(self, context):
         if not self.node:
             self.node = context['site']
         else:
             self.node = self.node.resolve(context)    
-            
         if not self.count == 5:
             self.count = self.count.render(context)    
             
         if not self.var == 'recent_posts':
             self.var = self.var.render(context) 
+        
+        category_filter = None
+        if not self.categories is None:
+            import re
+            category_filter = re.compile(self.categories)
 
         if (not hasattr(self.node, 'complete_page_list') or 
             not self.node.complete_page_list):    
-            complete_page_list = sorted(
-                self.node.walk_pages(),
-                key=operator.attrgetter("created"), reverse=True)
-            complete_page_list = filter(lambda page: page.display_in_list, 
-                                            complete_page_list)    
-            self.node.complete_page_list = complete_page_list
+                complete_page_list = sorted(
+                    self.node.walk_pages(),
+                    key=operator.attrgetter("created"), reverse=True)
+                complete_page_list = filter(lambda page: page.display_in_list, complete_page_list)
+                self.node.complete_page_list = complete_page_list
 
-        context[self.var] = self.node.complete_page_list[:int(self.count)]  
+        if category_filter is None:
+            context[self.var] = self.node.complete_page_list[:int(self.count)]
+        else:
+            posts = filter(lambda page: page.display_in_list and \
+                                            reduce(lambda c1,c2: c1 or category_filter.match(c2) is not None, \
+                                                    hasattr(page, 'categories') and page.categories or [], False), self.node.complete_page_list)
+            context[self.var] = posts[:int(self.count)]
         return ''
         
             
@@ -121,42 +133,18 @@ def recent_posts(parser, token):
     tokens = token.split_contents()
     count = 5
     node = None          
+    categories = None
     var = 'recent_posts'        
     if len(tokens) > 1:
         var = Template(tokens[1])    
     if len(tokens) > 2:
         count = Template(tokens[2])
     if len(tokens) > 3:
-        node = parser.compile_filter(tokens[3])        
-    return RecentPostsNode(var, count, node)            
-            
-class PostsLoader(template.Node):
-    """
-    Loads the list posts (pages in the CONTENT_BLOG_DIR node) until reaching the nbPosts limit. 
-    By default, no limit.
-    """
-    def __init__(self, nbPosts=None):
-        self.nbPosts=nbPosts
-        
-    def render(self, context):
-        site = context['site']
-        context['blog']['posts'] = []
-        nbPosts = self.nbPosts
-        for i, post in enumerate(site.find_node(Folder(settings.BLOG_DIR)).walk_pages()):
-            if post.listing == False:
-                if nbPosts != None and i >= nbPosts:
-                    break;
-                context['blog']['posts'].append(post)
-        return ""
-            
-@register.tag(name="load_posts")
-def load_posts(parser, token):
-    tokens = token.split_contents()
-    nbPosts = None
-    if len(tokens) > 1:
-        nbPosts = Template(tokens[1])
-    return PostsLoader(nbPosts)
-        
+        node = parser.compile_filter(tokens[3])   
+    if len(tokens) > 4:
+        categories = tokens[4]  
+    return RecentPostsNode(var, count, node, categories)
+                    
 @register.tag(name="latest_excerpt")
 def latest_excerpt(parser, token):
     tokens = token.split_contents()
@@ -294,3 +282,23 @@ class RenderHydeListingPageRewriteRulesNode(template.Node):
             "###  BEGIN GENERATED REWRITE RULES  ####\n" \
           + ''.join(rules) \
           + "\n####  END GENERATED REWRITE RULES  ####"
+          
+class IncludeTextNode(template.Node):
+  def __init__(self, include_node):
+      self.include_node = include_node
+
+  def render(self, context):
+      try:
+          import markdown
+          import typogrify
+      except ImportError:
+          print u"`includetext` requires Markdown and Typogrify."
+          raise
+      output = self.include_node.render(context)
+      output = markdown.markdown(output)    
+      output = typogrify.typogrify(output)            
+      return output          
+ 
+@register.tag(name="includetext")
+def includetext(parser, token): 
+      return IncludeTextNode(do_include(parser, token))

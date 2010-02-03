@@ -8,11 +8,11 @@ from hydeengine import Generator, Initializer, Server
 
 #import cProfile
 
-PROG_ROOT = os.path.dirname(os.path.abspath( __file__ ))
+PROG_ROOT = os.path.dirname(os.path.realpath( __file__ ))
 
 def main(argv):
     
-    parser = OptionParser(usage="%prog [-f] [-q]", version="%prog 0.3b")
+    parser = OptionParser(usage="%prog [-f] [-q]", version="%prog 0.4")
     parser.add_option("-s", "--sitepath", 
                         dest = "site_path", 
                         help = "Change the path of the site folder.")

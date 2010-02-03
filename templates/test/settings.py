@@ -18,7 +18,6 @@ SITE_ROOT = "/"
 SITE_WWW_URL = "http://www.yoursite.com"
 SITE_NAME = "Your Site"
 SITE_AUTHOR = "Your Name"
-SITE_ROOT = "/"
 
 #Url Configuration
 GENERATE_ABSOLUTE_FS_URLS = False
@@ -60,7 +59,13 @@ MEDIA_PROCESSORS = {
                 'hydeengine.media_processors.YUICompressor',),
         '.ccss':('hydeengine.media_processors.TemplateProcessor',
                 'hydeengine.media_processors.CleverCSS',
-                'hydeengine.media_processors.YUICompressor',),
+                'hydeengine.media_processors.YUICompressor',),  
+        '.sass':('hydeengine.media_processors.TemplateProcessor',
+                'hydeengine.media_processors.SASS',
+                'hydeengine.media_processors.YUICompressor',),                
+        '.less':('hydeengine.media_processors.TemplateProcessor',
+                'hydeengine.media_processors.LessCSS',
+                'hydeengine.media_processors.YUICompressor',),                
         '.hss':(
                 'hydeengine.media_processors.TemplateProcessor',
                 'hydeengine.media_processors.HSS',
@@ -93,8 +98,9 @@ SITE_PRE_PROCESSORS = {
     },
     '/': {
         'hydeengine.site_pre_processors.NodeInjector' : {
-               'variable' : 'blog_node',
-               'path' : 'content/blog'
+            'injections' : {
+                'blog_node' : 'content/blog',
+            }
         }
     }
 }
@@ -109,7 +115,15 @@ FILTER = {
 }        
 
 
-#Processor Configuration
+#Processor Configuration  
+
+# 
+#  Set this to the output of `which growlnotify`. If `which`  returns emtpy,
+#  install growlnotify from the Extras package that comes with the Growl disk image.
+# 
+#
+GROWL = None
+
 
 # path for YUICompressor, or None if you don't
 # want to compress JS/CSS. Project homepage:

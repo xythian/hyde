@@ -6,3 +6,5 @@ deploy/*
 *.profile
 *.log
 pylint*
+*.tmproj
+test_site

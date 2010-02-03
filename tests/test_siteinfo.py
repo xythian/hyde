@@ -223,7 +223,7 @@ class TestSiteInfo:
             
     def assert_page_attributes(self, page):
         if page.page_name in (
-                "about", "blog", "2008", "2009", "index"):
+                "about", "blog", "listing", "2008", "2009", "index"):
             assert page.listing
             assert page.node.listing_page
             assert page.node.listing_page == page
@@ -428,10 +428,12 @@ class TestSorting(MonitorTests):
         for page in self.site.content_node.walk_pages():
             if not prev_node or not prev_node == page.node:
                 assert not page.prev
-            elif prev_node == page.node and page.display_in_list:
-                assert page.prev
-                assert page.prev == prev_page
-                assert prev_page == page.prev
+            elif prev_node == page.node and page.display_in_list: 
+                if prev_page:
+                    assert page.prev
+                    assert page.prev == prev_page
+                else: 
+                    assert not page.prev
             if page.display_in_list:    
                 prev_page = page
             prev_node = page.node
@@ -534,6 +536,20 @@ class TestProcessing(MonitorTests):
         actual_text = actual_html_resource.temp_file.read_all()        
         self.assert_html_equals(expected_text, actual_text)   
         
+    def assert_valid_restructuredtext(self, actual_html_resource):
+        expected_text = File(
+                TEST_ROOT.child("dst_test_restructuredtext.html")).read_all()
+        self.generator.process(actual_html_resource)
+        # Ensure source file is not changed
+        # The source should be copied to tmp and then
+        # the processor should do its thing.
+        original_source = File(
+                TEST_ROOT.child("src_test_restructuredtext.html")).read_all()
+        source_text = actual_html_resource.file.read_all()
+        assert original_source == source_text        
+        actual_text = actual_html_resource.temp_file.read_all()        
+        self.assert_html_equals(expected_text, actual_text)
+        
     def test_process_page_rendering(self):
         self.generator = Generator(TEST_SITE.path)
         self.generator.build_siteinfo()
@@ -567,8 +583,10 @@ class TestProcessing(MonitorTests):
         assert self.exception_queue.empty()
         
     
-    def test_markdown(self):
-        try:
+    def test_markdown(self): 
+        try: 
+            import markdown2 as markdown
+        except ImportError:
             import markdown
         except ImportError:
             markdown = False
@@ -611,6 +629,29 @@ class TestProcessing(MonitorTests):
             t.join()             
             target.delete()
             assert self.exception_queue.empty()   
+    
+    def test_restructuredtext(self):
+        try:
+            import docutils
+        except ImportError:
+            docutils = False
+            print "Docutils not found, skipping unit tests"
+        
+        if docutils:
+            self.generator = Generator(TEST_SITE.path)
+            self.generator.build_siteinfo()
+            source = File(TEST_ROOT.child("src_test_restructuredtext.html"))
+            self.site.refresh()
+            assert self.queue.empty()
+            self.site.monitor(self.queue)
+            t = Thread(target=self.checker,
+                            kwargs={"asserter":self.assert_valid_restructuredtext})
+            t.start()
+            target = File(self.site.content_folder.child("test.html"))
+            source.copy_to(target)
+            t.join()
+            target.delete()
+            assert self.exception_queue.empty()
             
     def assert_prerendered(self, actual_html_resource):
         expected_text = File(
@@ -651,8 +692,8 @@ class TestProcessing(MonitorTests):
         site = context['site']
         self.generator.pre_process(site)
         assert context['categories']
-        assert len(context['categories']) == 4
-        assert len(context['categories']['wishes']) == 3  
+        assert len(context['categories']) == 4      
+        assert len(context['categories']['wishes'].posts) == 3  
         blog_node = site.find_node(TEST_SITE.child_folder('content/blog'))
         assert context['categories'] == blog_node.categories
         
