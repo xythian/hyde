@@ -70,10 +70,10 @@ class RestructuredTextNode(template.Node):
         try:
             from docutils.core import publish_parts
         except ImportError:
-            print u"Requires Markdown library to use Markdown tag."
+            print u"Requires docutils library to use reStructuredText tag."
             raise
         overrides = {}
-        if settings.RST_SETTINGS_OVERRIDES:
+        if hasattr(settings, 'RST_SETTINGS_OVERRIDES'):
             overrides = settings.RST_SETTINGS_OVERRIDES
         parts = publish_parts(source=output, writer_name="html4css1",
                 settings_overrides=overrides)
