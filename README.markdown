@@ -2,7 +2,7 @@
 
 0.4
 
-This document should give enough information to get you up and running. Check the [wiki](http://wiki.github.com/lakshmivyas/hyde) for detailed documentation.
+This document should give enough information to get you up and running. Check the [wiki](http://wiki.github.com/lakshmivyas/hyde) for detailed documentation. To use Clyde, the online content editor for hyde see the [clyde readme](http://github.com/lakshmivyas/hyde/tree/master/clydeweb/).
 
 Hyde is a static website generator with the power of Django templates behind it. You can read more about its conception, history and features [here][1] and [here][2].
 
