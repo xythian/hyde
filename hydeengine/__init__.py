@@ -37,6 +37,7 @@ class _HydeDefaults:
     SITE_PRE_PROCESSORS = {}
     SITE_POST_PROCESSORS = {}
     CONTEXT = {}
+    RST_SETTINGS_OVERRIDES = {}
 
 def setup_env(site_path):
     """    
