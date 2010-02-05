@@ -167,7 +167,27 @@ class SiteNode(object):
 
     def __repr__(self):
         return str(self.folder)
-      
+    
+    @property    
+    def simple_dict(self):
+        ress = []
+        for resource in self.walk_resources():
+            fragment =  Folder(
+                            resource.node.folder.get_fragment(
+                                self.site.folder.path)).child(resource.file.name)
+            res = dict(
+                        name=resource.file.name,
+                        path=fragment)
+            ress.append(res)
+        nodes = []
+        for node in self.children:
+            nodes.append(node.simple_dict)
+        return dict(
+                name=self.folder.name, 
+                path=self.folder.get_fragment(self.site.folder.path),
+                resources=ress,
+                nodes=nodes)            
+   
     @property
     def isroot(self):
         return not self.parent
@@ -576,4 +596,3 @@ class SiteInfo(SiteNode):
                         "exception": False
                     })
                 resource.node.remove_resource(resource)
-                

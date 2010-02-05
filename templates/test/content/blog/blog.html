@@ -3,3 +3,11 @@
 {%hyde
     title: Archives
 %}
+{% block content_header %}
+<h1>Browse by category</h1>
+<ul>
+{% for name, category in categories.items  %}
+    <li><a href="{{category.archive_url}}">{{name}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

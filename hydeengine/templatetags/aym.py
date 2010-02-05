@@ -52,7 +52,14 @@ class MarkdownNode(template.Node):
         except ImportError:
             print u"Requires Markdown library to use Markdown tag."
             raise
-        return markdown.markdown(output, self.extensions)
+        extensions = self.extensions
+        if hasattr(settings,'MD_EXTENSIONS'):
+            extensions = extensions + settings.MD_EXTENSIONS
+        extensions_config = {}
+        if hasattr(settings,'MD_EXTENSIONS_CONFIG'):
+            extensions_config = settings.MD_EXTENSIONS_CONFIG
+        md = markdown.Markdown(extensions=extensions,extension_configs=extensions_config)
+        return md.convert(output)
 
 
 @register.tag(name="restructuredtext")

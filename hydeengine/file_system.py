@@ -420,9 +420,9 @@ class Folder(FileSystemEntity):
         Moves this directory to the given destination. Returns a Folder object
         that represents the moved directory.
 
-        """
+        """    
         shutil.copytree(self.path, str(destination))
-        shutil.rmtree(str(destination))
+        shutil.rmtree(self.path)
         return self.__get_destination__(destination)
 
     def copy_to(self, destination):
