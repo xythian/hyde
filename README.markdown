@@ -241,6 +241,8 @@ It is used as follows:
     
     {% endrestructuredtext %}
 
+The default reStructuredText settings may be changed by assigning a dictionary of setting names and values to the ``RST_SETTINGS_OVERRIDES`` setting in the settings file.  For information on the various configuration options, see the [docutils configuration documentation](http://docutils.sourceforge.net/docs/user/config.html).
+
 
 ### asciidoc
 
