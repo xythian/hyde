@@ -28,6 +28,27 @@ class TextileNode(template.Node):
             raise
         return textile.textile(output)
 
+@register.tag(name="markdown2")
+def markdown2Parser(parser, token):
+    nodelist = parser.parse(('endmarkdown2',))
+    parser.delete_first_token()
+    return Markdown2Node(nodelist, extensions)
+
+class Markdown2Node(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        output = self.nodelist.render(context)
+   
+        try:
+            import markdown2
+        except ImportError:
+            print u"Template uses markdown2 tag but markdown2 library not found."
+            raise                                                               
+            
+        md = markdown2.Markdown()
+        return md.convert(output)
 
 @register.tag(name="markdown")
 def markdownParser(parser, token):
@@ -44,20 +65,18 @@ class MarkdownNode(template.Node):
         self.extensions = extensions
 
     def render(self, context):
-        output = self.nodelist.render(context)
-        try:
-            import markdown2 as markdown
-        except ImportError:
-            import markdown
-        except ImportError:
-            print u"Requires Markdown library to use Markdown tag."
-            raise
+        output = self.nodelist.render(context) 
         extensions = self.extensions
         if hasattr(settings,'MD_EXTENSIONS'):
             extensions = extensions + settings.MD_EXTENSIONS
         extensions_config = {}
         if hasattr(settings,'MD_EXTENSIONS_CONFIG'):
             extensions_config = settings.MD_EXTENSIONS_CONFIG
+        try:
+            import markdown
+        except ImportError:
+            print u"Requires Markdown library to use Markdown tag."
+            raise            
         md = markdown.Markdown(extensions=extensions,extension_configs=extensions_config)
         return md.convert(output)
 
