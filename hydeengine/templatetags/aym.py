@@ -32,7 +32,7 @@ class TextileNode(template.Node):
 def markdown2Parser(parser, token):
     nodelist = parser.parse(('endmarkdown2',))
     parser.delete_first_token()
-    return Markdown2Node(nodelist, extensions)
+    return Markdown2Node(nodelist)
 
 class Markdown2Node(template.Node):
     def __init__(self, nodelist):
