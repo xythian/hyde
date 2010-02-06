@@ -40,7 +40,6 @@ class Markdown2Node(template.Node):
 
     def render(self, context):
         output = self.nodelist.render(context)
-   
         try:
             import markdown2
         except ImportError:
