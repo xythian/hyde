@@ -72,7 +72,7 @@ class CategoriesArchiveGenerator:
         if 'output_folder' in params and params['output_folder'] is not None \
                 and len(params['output_folder']) > 0:
             relative_folder = output_folder = params['output_folder']
-        output_folder = os.path.join(settings.CONTENT_DIR, folder.name, output_folder)
+        output_folder = os.path.join(settings.TMP_DIR, folder.name, output_folder)
         if not os.path.isdir(output_folder):
             os.makedirs(output_folder)
 
