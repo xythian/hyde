@@ -42,7 +42,7 @@ def teardown_module(module):
 class TestFilters:
     
     def setup_method(self, method):
-        self.files = []
+        self.files = []          
         
     def teardown_method(self, method):
         for f in self.files:
@@ -121,7 +121,7 @@ class TestSiteInfo:
 
     def setup_method(self, method):
         self.site = SiteInfo(settings, TEST_SITE.path)
-        self.site.refresh()
+        self.site.refresh()  
         
     def assert_node_complete(self, node, folder):
         assert node.folder.path == folder.path
@@ -581,12 +581,9 @@ class TestProcessing(MonitorTests):
         t.join()
         target.delete()
         assert self.exception_queue.empty()
-        
     
     def test_markdown(self): 
         try: 
-            import markdown2 as markdown
-        except ImportError:
             import markdown
         except ImportError:
             markdown = False
@@ -684,18 +681,6 @@ class TestProcessing(MonitorTests):
         t.join()             
         target.delete()
         assert self.exception_queue.empty()
-
-    def test_categories(self):                    
-        self.generator = Generator(TEST_SITE.path)
-        self.generator.build_siteinfo()
-        context = settings.CONTEXT 
-        site = context['site']
-        self.generator.pre_process(site)
-        assert context['categories']
-        assert len(context['categories']) == 4      
-        assert len(context['categories']['wishes'].posts) == 3  
-        blog_node = site.find_node(TEST_SITE.child_folder('content/blog'))
-        assert context['categories'] == blog_node.categories
         
     def test_node_injector(self):
         self.generator = Generator(TEST_SITE.path)
@@ -707,8 +692,21 @@ class TestProcessing(MonitorTests):
             assert post.blog_node
             assert post.blog_node == blog_node           
             
-
-
+class TestPreProcessors:
+    
+    def test_categories(self):                    
+        self.generator = Generator(TEST_SITE.path)
+        self.generator.build_siteinfo()  
+        context = settings.CONTEXT 
+        site = context['site']
+        self.generator.pre_process(site) 
+        assert context['categories']
+        assert len(context['categories']) == 4      
+        assert len(context['categories']['wishes'].posts) == 3  
+        blog_node = site.find_node(TEST_SITE.child_folder('content/blog'))
+        assert context['categories'] == blog_node.categories
+    
+        
 class TestPostProcessors:
             
     def test_folder_flattener(self):
