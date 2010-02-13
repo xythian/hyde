@@ -466,7 +466,7 @@ class Initializer(object):
             if len(files) and not force:
                 raise ValueError(
                 "The site_path[%s] is not empty." % self.site_path)
-            else:
+            elif force:
                 self.site_path.delete()
         self.site_path.make()
         self.site_path.copy_contents_of(template_dir)
