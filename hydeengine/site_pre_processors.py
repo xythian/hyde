@@ -46,7 +46,7 @@ class CategoriesManager:
     def process(folder, params):
         context = settings.CONTEXT
         site = context['site']    
-        node = params['node'] 
+        node = params['node']
         categories = {}                                      
         for post in node.walk_pages():
             if hasattr(post, 'categories') and post.categories != None:

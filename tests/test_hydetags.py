@@ -29,6 +29,8 @@ from hydeengine.site_post_processors import FolderFlattener
 TEST_ROOT = Folder(TEST_ROOT)
 TEST_SITE = TEST_ROOT.child_folder("test_site")
 
+ORIGINAL_PRE_PROCESSORS = settings.SITE_PRE_PROCESSORS  
+
 def setup_module(module):
     Initializer(TEST_SITE.path).initialize(ROOT, template='test', force=True)
     setup_env(TEST_SITE.path)
@@ -43,7 +45,8 @@ def setup_module(module):
     settings.LISTING_PAGE_NAMES = ['listing', 'index', 'default']
     
 def teardown_module(module):
-    TEST_SITE.delete()
+    TEST_SITE.delete() 
+    settings.SITE_PRE_PROCESSORS = ORIGINAL_PRE_PROCESSORS
         
 class TestHydeTags:
             
@@ -57,6 +60,7 @@ class TestHydeTags:
         self.generator.process(actual_resource)
         expected_text = File(
                 TEST_ROOT.child("recent_posts_dest.html")).read_all()
-        actual_text = actual_resource.temp_file.read_all()
+        actual_text = actual_resource.temp_file.read_all()       
+        print actual_text
         assert expected_text == actual_text
 

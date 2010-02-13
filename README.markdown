@@ -196,7 +196,12 @@ It is used as follows:
 
     1.  Or at least that is my opinion.
     2.  What about you?
-    {% endmarkdown %}
+    {% endmarkdown %}   
+
+#### Markdown2
+
+Hyde also supports markdown2 with the `{%markdown2%}{%endmarkdown2%}` block template tag.
+
 
 ### Textile
 
