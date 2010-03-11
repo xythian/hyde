@@ -133,9 +133,15 @@ class Processor(object):
             if not child.type in ("content", "media"):
                 continue
             fragment = child.temp_folder.get_fragment(node.site.temp_folder)
-            fragment = fragment.rstrip("/")
+            if sys.platform == 'win32':
+                fragment = fragment.rstrip("\\")
+            else:
+                fragment = fragment.rstrip("/")
             if not fragment:
-                fragment = "/"
+                if sys.platform == 'win32':
+                    fragment = "\\"
+                else:
+                    fragment = "/"
             if fragment in processors:           
                 processor_config = processors[fragment]
                 for processor_name, params in processor_config.iteritems():
