@@ -368,8 +368,10 @@ class ContentNode(SiteNode):
     @property
     def temp_folder(self):
         temp_folder = self.site.temp_folder
-        # return temp_folder.child_folder_with_fragment(self.url)
-        return temp_folder.child_folder_with_fragment(self.fragment)
+        if sys.platform == 'win32':
+            return temp_folder.child_folder_with_fragment(self.fragment)
+        else:
+            return temp_folder.child_folder_with_fragment(self.url)
 
     @property
     def fragment(self):
@@ -433,8 +435,10 @@ class MediaNode(SiteNode):
     @property
     def temp_folder(self):
         temp_folder = self.site.temp_folder
-        # return temp_folder.child_folder_with_fragment(self.url)
-        return temp_folder.child_folder_with_fragment(self.fragment)
+        if sys.platform == 'win32':
+            return temp_folder.child_folder_with_fragment(self.fragment)
+        else:
+            return temp_folder.child_folder_with_fragment(self.url)
     
 class SiteInfo(SiteNode):
     def __init__(self, settings, site_path):
@@ -547,7 +551,6 @@ class SiteInfo(SiteNode):
         site = self
         # Have to poll for changes since there is no reliable way
         # to get notification in a platform independent manner
-        #                    
         class Visitor(object):
             def visit_folder(self, folder):
                 return folder.allow(**site.settings.FILTER)
