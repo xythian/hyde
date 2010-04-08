@@ -5,7 +5,7 @@ import optparse
 import os
 import sys
 
-from hydeengine import Generator, Initializer, Server
+import hydeengine
 
 PROG_ROOT = os.path.dirname(os.path.realpath( __file__ ))
 
@@ -33,7 +33,8 @@ def main(argv):
                         help = "Change the path of the deploy folder.")
     parser.add_option("-w", "--webserve", action = "store_true",
                         dest = "webserve", default = False,
-                        help = "Start an instance of the CherryPy webserver.")
+                        help = "Start serving using a webserver.")
+    parser.add_option("--web-flavor", metavar='NAME', default="CherryPy", help="Specify the flavor of the server (CherryPy, gevent)")
     parser.add_option("-p", "--port",
                         dest = "port", default=8080,
                         type='int',
@@ -47,6 +48,16 @@ def main(argv):
     if len(args):
         parser.error("Unexpected arguments encountered.")
 
+    if options.webserve:
+        servers = {'cherrypy': hydeengine.Server,
+                   'gevent':   hydeengine.GeventServer}
+
+        Server = servers.get(options.web_flavor.lower())
+        if not Server:
+            parser.error('Invalid web service flavor "%s" (valid: %s)' % \
+                         (options.web_flavor, ', '.join(servers.keys())))
+
+
     if not options.site_path:
         options.site_path = os.getcwdu()
 
@@ -54,7 +65,7 @@ def main(argv):
         options.deploy_to = os.path.abspath(options.deploy_to)
 
     if options.init:
-        initializer = Initializer(options.site_path)
+        initializer = hydeengine.Initializer(options.site_path)
         initializer.initialize(PROG_ROOT,
                         options.template, options.force_init)
 
@@ -68,7 +79,7 @@ def main(argv):
             generator.quit()
 
     if options.generate:
-        generator = Generator(options.site_path)
+        generator = hydeengine.Generator(options.site_path)
         generator.generate(options.deploy_to, options.keep_watching, quit)
 
     if options.webserve:

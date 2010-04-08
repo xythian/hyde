@@ -3,9 +3,11 @@
 
 """
 import imp
+import mimetypes
 import os
 import sys
 import subprocess
+import urllib
 
 from collections import defaultdict
 from Queue import Queue, Empty
@@ -19,6 +21,7 @@ from file_system import File, Folder
 from path_util import PathUtil
 from processor import Processor
 from siteinfo import SiteInfo
+from url import clean_url
 
 class _HydeDefaults:
     GENERATE_CLEAN_URLS = False
@@ -141,6 +144,10 @@ class Server(object):
             if settings.GENERATE_CLEAN_URLS:
                 @cherrypy.expose
                 def default(self, *args):
+                    # TODO notice that this method has security flaws
+                    # TODO for every url_file_mapping not found, we will
+                    #      save that in url_file_mapping. not optimal.
+
                     # first, see if the url is in the url_file_mapping
                     # dictionary
                     file = url_file_mapping[os.sep.join(args)]
@@ -217,6 +224,120 @@ class Server(object):
     def quit(self):
         import cherrypy
         cherrypy.engine.exit()
+
+
+# TODO split into a generic wsgi handler, combine it with the current server
+def GeventServer(*args, **kwargs):
+    import gevent.greenlet
+    import gevent.wsgi
+
+    class GeventServerWrapper(Server):
+        STOP_TIMEOUT = 10
+        CHUNK_SIZE = 4096
+        FALLBACK_CONTENT_TYPE = 'application/octet-stream'
+
+        def __init__(self, *args, **kwargs):
+            super(GeventServerWrapper, self).__init__(*args, **kwargs)
+
+            addr = (self.address, self.port)
+            self.server = gevent.wsgi.WSGIServer(addr, self.request_handler)
+
+            self.paths = {}
+            self.root = None
+
+            # FIXME
+            mimetypes.init()
+
+        def serve(self, deploy_path, exit_listener):
+            setup_env(self.site_path)
+            validate_settings()
+
+            self.root = deploy_path or settings.DEPLOY_DIR
+
+            if not 'site' in settings.CONTEXT:
+                generator = Generator(self.site_path)
+                generator.create_siteinfo()
+
+            def add_url(url, path, listing):
+                # TODO fix this ugly url hack
+                if settings.GENERATE_CLEAN_URLS and '.' in url:
+                    url = clean_url(url)
+
+                # strip names from listing pages
+                head, tail = os.path.split(url)
+                parent = os.path.basename(head)
+                name = os.path.splitext(tail)[0]
+                if listing and (name == parent or
+                                name in settings.LISTING_PAGE_NAMES):
+                    url = os.path.dirname(url)
+                self.paths.setdefault(url, path)
+
+            # gather all urls (only works if you generate it)
+            """
+            site = settings.CONTEXT['site']
+            for page in site.walk_pages():
+                url = page.url.strip('/')
+                add_url(url, page.target_file.path, page.listing)
+            """
+
+            # register all other static files
+            # FIXME we just register all files, we should do this properly
+            # FIXME we're relying on os.sep is /, fine for now
+            for dirpath, dirnames, filenames in os.walk(self.root):
+                path = dirpath[len(self.root)+1:]
+                for filename in filenames:
+                    url = os.path.join(path, filename)
+                    # do we know if it's listing or not?
+                    add_url(url, os.path.join(dirpath, filename), listing=True)
+
+            import pprint
+            print 'I currently serve: \n', pprint.pformat(sorted(self.paths.items()))
+
+            self.server.start()
+            print 'Started %s on %s:%s' % (self.server.base_env['SERVER_SOFTWARE'],
+                                           self.server.server_host,
+                                           self.server.server_port)
+
+
+        def block(self):
+            # XXX is there a nicer way of doing this?
+            try:
+                self.server._stopped_event.wait()
+            finally:
+                gevent.greenlet.Greenlet.spawn(self.server.stop,
+                                               timeout=self.STOP_TIMEOUT).join()
+
+        def quit(self):
+            self.server.stop(timeout=self.STOP_TIMEOUT)
+
+        def request_handler(self, env, start_response):
+            # extract the real requested file
+            path = os.path.abspath(urllib.unquote_plus(env['PATH_INFO']))
+
+            # check if file exists
+            filename = self.paths.get(path.strip('/'))
+            if not filename or not os.path.exists(filename):
+                start_response('404 Not Found', [('Content-Type', 'text/plain')])
+                yield 'Not Found\n'
+                return
+
+            # TODO how do we easiest detect mime types?
+            content_type, encoding = mimetypes.guess_type(filename)
+            if not content_type:
+                content_type = self.FALLBACK_CONTENT_TYPE
+            start_response('200 OK', [('Content-Type', content_type)])
+
+            # TODO make this async?
+            f = file(filename, 'rb')
+            try:
+                chunk = f.read(self.CHUNK_SIZE)
+                while chunk:
+                    yield chunk
+                    chunk = f.read(self.CHUNK_SIZE)
+            finally:
+                f.close()
+
+    return GeventServerWrapper(*args, **kwargs)
 
 class Generator(object):
     """
