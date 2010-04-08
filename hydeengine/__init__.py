@@ -41,6 +41,13 @@ def setup_env(site_path):
     # Don't do it twice
     if hasattr(settings, "CONTEXT"):
         return
+
+    settings_file = os.path.join(site_path, "settings.py")
+    if not os.path.exists(settings_file):
+        print "No Site Settings File Found"
+        raise ValueError("The given site_path [%s] does not contain a hyde site. "
+                         "Give a valid path or run -init to create a new site." % (site_path,))
+
     try:
         hyde_site_settings = imp.load_source("hyde_site_settings",
                         os.path.join(site_path,"settings.py"))
@@ -50,13 +57,9 @@ def setup_env(site_path):
         print err
         exit()
     except Exception, err:
-        print "Cannot Import Site Settings"
-        print err
-        raise ValueError(
-            "The given site_path [%s] does not contain a hyde site. "
-            "Give a valid path or run -init to create a new site."
-            %  site_path
-        )
+        print "Failed to import Site Settings"
+        print "The settings file [%s] contains errors." % (settings_file,)
+        raise
 
     try:
         from django.conf import global_settings
