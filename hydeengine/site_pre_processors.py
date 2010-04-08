@@ -10,6 +10,9 @@ import urllib
 from django.conf import settings
 from django.template.loader import render_to_string
 
+import hydeengine.url as url
+
+
 """
     PRE PROCESSORS
 
@@ -85,6 +88,11 @@ class CategoriesArchiveGenerator:
         for name, category in categories.iteritems():
             archive_resource = urllib.quote_plus(name) + '.html'
             category.archive_url = "/%s/%s" % (folder.name, "%s/%s" % (relative_folder, archive_resource))
+            # TODO break out checks from siteinfo.py
+            if settings.GENERATE_CLEAN_URLS:
+                category.archive_url = url.clean_url(category.archive_url)
+                if settings.APPEND_SLASH:
+                    category.archive_url += '/'
 
         node.categories = categories
 
