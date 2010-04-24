@@ -16,7 +16,7 @@ from datetime import timedelta
 from hydeengine.file_system import Folder 
 
 
-marker_start = "<!-- Hyde::%s::Begin -->\n"
+marker_start = "<!-- Hyde::%s::Begin -->"
 marker_end = "<!-- Hyde::%s::End -->"
 
 register = Library()
