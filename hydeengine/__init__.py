@@ -291,7 +291,7 @@ def GeventServer(*args, **kwargs):
                     add_url(url, os.path.join(dirpath, filename), listing=True)
 
             import pprint
-            print 'I currently serve: \n', pprint.pformat(sorted(self.paths.items()))
+            #print 'I currently serve: \n', pprint.pformat(sorted(self.paths.items()))
 
             self.server.start()
             print 'Started %s on %s:%s' % (self.server.base_env['SERVER_SOFTWARE'],
@@ -408,7 +408,7 @@ class Generator(object):
             for resource in self.siteinfo.walk_resources():
                 self.process(resource)
             self.complete_generation()
-        except:
+        except Exception, e:
             print >> sys.stderr, "Generation Failed"
             print >> sys.stderr, sys.exc_info()
             self.notify(self.siteinfo.name, "Generation Failed")
