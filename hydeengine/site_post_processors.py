@@ -9,6 +9,35 @@ from hydeengine.templatetags.hydetags import xmldatetime
 import commands
 import codecs
 
+class YUICompressor:
+
+    @staticmethod
+    def process(folder, params):
+		class Compressor:
+			def visit_file(self, thefile):
+				if settings.YUI_COMPRESSOR == None:
+					return
+				compress = settings.YUI_COMPRESSOR
+				if not os.path.exists(compress):
+					compress = os.path.join(
+							os.path.dirname(
+							os.path.abspath(__file__)), "..", compress)
+
+				if not compress or not os.path.exists(compress):
+					raise ValueError(
+					"YUI Compressor cannot be found at [%s]" % compress)
+
+				tmp_file = File(thefile.path + ".z-tmp")
+				status, output = commands.getstatusoutput(
+				u"java -jar %s %s > %s" % (compress, thefile.path, tmp_file.path))
+				if status > 0:
+					print output
+				else:
+					thefile.delete()
+					tmp_file.move_to(thefile.path)
+
+		folder.walk(Compressor(), "*.css")
+
 class FolderFlattener:
     
     @staticmethod
