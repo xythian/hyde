@@ -147,6 +147,8 @@ You also need to set the ``THUMBNAIL_MAX_WIDTH`` and ``THUMBNAIL_MAX_HEIGHT`` va
 
 You can set the ``THUMBNAIL_FILENAME_POSTFIX`` to change the string that is appended to the filename of thumbnails. By default this is ``-thumb`` (i.e. the thumbnail of ``my-image.png`` will be called ``my-image-thumb.png``).
 
+You can optionally set the ``THUMBNAIL_JPEG_QUALITY`` (between 0 and 100) to control the JPEG compression quality.
+
 [PIL]: http://www.pythonware.com/products/pil/
 
 ### Content Processors
