@@ -10,7 +10,7 @@
  	{%endblock%}{%block feed_extra%}{%endblock%}
  	<updated>{{now|xmldatetime}}</updated>
  	<id>{{site.full_url}}</id>
- 	{% for node_page in page.node.walk_pages %}
+ 	{% for node_page in page.node.walk_pages_reverse %}
  	{% if node_page.display_in_list %}
  	<entry>
    		<title>{{node_page.title}}</title>
