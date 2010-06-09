@@ -306,6 +306,7 @@ class ContentNode(SiteNode):
         self.feed_url = None
 
     walk_pages = SiteNode.walk_resources
+    walk_pages_reverse = SiteNode.walk_resources_reverse
 
     @property
     def module(self):
