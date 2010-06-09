@@ -60,10 +60,10 @@ class Page(SiteResource):
     def __init__(self, a_file, node):            
         if not node:            
             raise ValueError("Page cannot exist without a node")
-        super(Page, self).__init__(a_file, node) 
-        self.created = self.updated = datetime.strptime(
-                                    "2000-01-01", 
-                                    "%Y-%m-%d")
+        super(Page, self).__init__(a_file, node)
+        self.created = datetime.strptime("2000-01-01", 
+                                         "%Y-%m-%d")
+        self.updated = None
         listing_pages = self.node.site.settings.LISTING_PAGE_NAMES                            
         self.listing = a_file.name_without_extension in listing_pages
         self.exclude = False
@@ -72,9 +72,12 @@ class Page(SiteResource):
         self.process()
         if type(self.created) == date:
             self.created = datetime.combine(self.created, time())
+            
         if type(self.updated) == date:
-            self.updated = datetime.combine(self.updated, time())                          
-
+            self.updated = datetime.combine(self.updated, time())
+        else:
+            self.updated = self.created
+        
     @property    
     def page_name(self):
         return self.file.name_without_extension
