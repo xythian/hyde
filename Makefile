@@ -3,5 +3,5 @@ all: refresh
 refresh:
 	./hyde.py -g -s ./snorp.net
 
-run: refresh
-	./hyde.py -k -w -s ./snorp.net
+monitor:
+	./hyde.py -k -g -s ./snorp.net
