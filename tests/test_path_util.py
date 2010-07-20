@@ -46,6 +46,9 @@ def test_get_mirror_dir():
     mirror_dir = PathUtil.get_mirror_dir(directory, source_root, mirror_root,
                                         ignore_root=True)
     assert mirror_dir == "/usr/tmp/stuff/"
+    mirror_dir = PathUtil.get_mirror_dir(source_root, source_root, mirror_root,
+                                        ignore_root=True)
+    assert mirror_dir == mirror_root
 
 
 # TODO: I haven't written any tests for mirror_dir_tree() because it doesn't
