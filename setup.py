@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='hyde',
-      verison='0.4',
+      version='0.4',
       description='static site generator',
       packages=find_packages(),
       install_requires=(
