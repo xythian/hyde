@@ -142,4 +142,7 @@ class Thumbnail:
             postfix = "-thumb"
         thumb_path = "%s%s.%s" % (orig_path, postfix, orig_extension)
 
-        i.save(thumb_path)
+        if i.format == "JPEG" and "THUMBNAIL_JPEG_QUALITY" in dir(settings):
+            i.save(thumb_path, quality = settings.THUMBNAIL_JPEG_QUALITY, optimize = True)
+        else:
+            i.save(thumb_path)
