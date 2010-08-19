@@ -104,14 +104,14 @@ class RssGenerator:
             categories = node.categories
         if categories != None:
             #feed generation for each category
-            for category in categories.keys():
+            for category in categories:
                 #create a ContentNode adapter for categories to walk through the collection (walk_pages function)
                 #the same way than through the site's ContentNode
-                category_adapter = ContentNodeAdapter(categories[category])
+                category_adapter = ContentNodeAdapter(category)
                 feed = generator.generate(category_adapter)
-                feed_filename = "%s.xml" % (category.lower().replace(' ','_'))
+                feed_filename = "%s.xml" % (category["name"].lower().replace(' ','_'))
                 feed_url = "%s/%s/%s/%s" % (settings.SITE_WWW_URL, site.url, output_folder, feed_filename)
-                node.categories[category].feed_url = feed_url
+                category["feed_url"] = feed_url
                 RssGenerator._write_feed(feed, output_folder, feed_filename)
         feed = generator.generate(node)
         node.feed_url = "%s/%s/%s/%s" % (settings.SITE_WWW_URL, site.url, output_folder, "feed.xml")
@@ -135,7 +135,7 @@ class ContentNodeAdapter:
         self.category = category
 
     def walk_pages(self):
-        for post in self.category.posts:
+        for post in self.category["posts"]:
             yield post
 
 class FeedGenerator:
@@ -194,6 +194,8 @@ class Rss2FeedGenerator(FeedGenerator):
     def __init__(self):
         FeedGenerator.__init__(self)
         self.re_content = re.compile(r"<!-- Hyde::Article::Begin -->(.*)<!-- Hyde::Article::End -->", re.DOTALL)
+        self.date_format = hasattr(settings, "POST_DATE_FORMAT") and \
+                            settings.POST_DATE_FORMAT or "%d %b %y %H:%M GMT"
 
     def generate_items(self, node):
         items = ""
@@ -204,9 +206,10 @@ class Rss2FeedGenerator(FeedGenerator):
             item_title = post.title
             item_link = post.full_url
             guid = post.full_url
-            description = self.re_content.findall(post.temp_file.read_all())[0]
+            description = self.re_content.findall(post.temp_file.read_all())
+            description = len(description) > 0 and description[0] or ""
             description = description.decode("utf-8")
-            publication_date = post.created.strftime("%d %b %y %H:%M GMT")
+            publication_date = post.created.strftime(self.date_format)
             cur_item = RSS2_ITEMS % locals()
             items = "%s%s" % (items, cur_item)
         return items
