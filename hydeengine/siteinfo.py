@@ -75,7 +75,7 @@ class Page(SiteResource):
             
         if type(self.updated) == date:
             self.updated = datetime.combine(self.updated, time())
-        else:
+        elif type(self.updated) != datetime:
             self.updated = self.created
         
     @property    
