@@ -1,24 +1,32 @@
 import os
 
 class PathUtil:
-    @staticmethod   
+    @staticmethod
     def filter_hidden_inplace(item_list):
+        """
+        Given a list of filenames, removes filenames for invisible files (whose
+        names begin with dots) or files whose names end in tildes '~'.
+        Does not remove files with the filname '.htaccess'.
+        The list is modified in-place; this function has no return value.
+        """
 
-        if(not len(item_list)): 
+        if not item_list:
             return
-                    
+
         wanted = filter(
-        lambda item:
-         not ((item.startswith('.') and item != ".htaccess") or item.endswith('~')), item_list)
-         
+            lambda item:
+                not ((item.startswith('.') and item != ".htaccess")
+                     or item.endswith('~')),
+            item_list)
+
         count = len(item_list)
         good_item_count = len(wanted)
 
-        if(count == good_item_count): 
+        if count == good_item_count:
             return
-            
+
         item_list[:good_item_count] = wanted
-        for i in range(good_item_count, count):
+        for _ in range(good_item_count, count):
             item_list.pop()
 
     @staticmethod

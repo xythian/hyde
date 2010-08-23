@@ -2,22 +2,27 @@
 
 0.4
 
-This document should give enough information to get you up and running. Check the [wiki](http://wiki.github.com/lakshmivyas/hyde) for detailed documentation. To use Clyde, the online content editor for hyde see the [clyde readme](http://github.com/lakshmivyas/hyde/tree/master/clydeweb/).
+This document should give enough information to get you up and running. Check
+the [wiki](http://wiki.github.com/lakshmivyas/hyde) for detailed documentation.
+To use Clyde, the online content editor for hyde see the
+[clyde readme](http://github.com/lakshmivyas/hyde/tree/master/clydeweb/).
 
-Hyde is a static website generator with the power of Django templates behind it. You can read more about its conception, history and features [here][1] and [here][2].
+Hyde is a static website generator with the power of Django templates behind it.
+You can read more about its conception, history and features [here][1] and
+[here][2].
 
 [1]: http://www.ringce.com/products/hyde/hyde.html
 [2]: http://www.ringce.com/blog/2009/introducing_hyde.html
 
+
 ## Basic Installation
 
-The very basic installation of hyde only needs Django, Markdown and pyYAML. More python goodies are needed based on the features you may use.
+Get the hyde source by cloning this repository.
 
-    sudo easy_install django
-    sudo easy_install pyYAML
-    sudo easy_install markdown
+The very basic installation of hyde only needs Django, Markdown and pyYAML. More
+python goodies are needed based on the features you may use.
 
-Get the hyde source by [git cloning](http://github.com/guides/home) this repository.
+    pip install -r requirements.txt
 
 
 ## Running with Hyde
@@ -27,33 +32,36 @@ The hyde engine has three entry points:
 1. Initializer
 
         python hyde.py -i -s path/to/your/site [-t template_name = default] [-f]
-    During initialization hyde creates a basic website by copying the specified template (or default). This template contains the skeleton site layout, some content pages and settings.py.
-    
+
+    During initialization hyde creates a basic website by copying the specified
+    template (or default). This template contains the skeleton site layout, some
+    content pages and settings.py.
+
     Be careful with the -f setting, though: it will overwrite your website.
 
 
 2. Generator
 
         python hyde.py -g -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy] [-k]
-    
-    This will process the content and media and copy the generated website to your deploy directory. 
 
-    If the -k option is specified, hyde will monitor the source folder for changes and automatically process them when the changes are encountered. This option is very handy when tweaking css or markup to quickly check the results. Note of caution: This option does not update listing files or excerpt files. It is recommended that you run -g again before you deploy the website.  
-    
+    This will process the content and media and copy the generated website to your deploy directory.
+
+    If the -k option is specified, hyde will monitor the source folder for changes and automatically process them when the changes are encountered. This option is very handy when tweaking css or markup to quickly check the results. Note of caution: This option does not update listing files or excerpt files. It is recommended that you run -g again before you deploy the website.
+
     If you are on Mac OS X and would like to get Growl notifications, just set the GROWL setting to the `growlnotify` script path.
 
 3. Web Server
 
         python hyde.py -w -s path/to/your/site [-d deploy_dir=path/to/your/site/deploy]
-    
+
     This will start an instance of a cherrypy server and serve the generated website at localhost:8080.
 
-    
+
 ## Site structure
 
 * layout - Template files that are used as base templates for content. None of the files in the layout folder are copied over to the deploy directory.
 * content - Any file that is not prefixed with \_, . or suffixed with ~ are processed by running through the template engine.
-* media - Contains site media, css, js and images. 
+* media - Contains site media, css, js and images.
 * settings.py - Django and hyde settings.
 
 ### Recommended conventions
@@ -74,22 +82,22 @@ Media processors are defined in the following format:
     {<folder>:{
         <file_extension_with_dot>:(<processor_module_name1>, <processor_module_name2>)}
     }
-    
+
 The processors are executed in the order in which they are defined. The output from the first processor becomes the input of the next.
 
 A \* instead of folder will apply the setting to all folders. There is no wildcard support for folder name yet, \* is just a catch all special case.
 
-File extensions should be specified as .css, .js, .png etc. Again no wildcard support yet. 
+File extensions should be specified as .css, .js, .png etc. Again no wildcard support yet.
 
 Hyde retains the YUI Compressor, Clever CSS and HSS processors from aym-cms.
 
-#### Template Processor 
+#### Template Processor
 
-Template processor allows the use of context variables inside your media files. 
+Template processor allows the use of context variables inside your media files.
 
 #### YUI Compressor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.YUICompressor'`` and compresses them. 
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.YUICompressor'`` and compresses them.
 
 [yuic]: http://developer.yahoo.com/yui/compressor/
 
@@ -98,7 +106,7 @@ be a path to a [YUI Compressor][yuic] jar on your computer.
 
 #### Closure Compiler
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.ClosureCompiler'`` and compresses them. 
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.ClosureCompiler'`` and compresses them.
 
 [closure]: http://closure-compiler.googlecode.com/
 
@@ -107,7 +115,7 @@ be a path to a [Closure Compiler][closure] jar on your computer.
 
 #### Clever CSS Processor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.CleverCSS'`` and converts them to css. 
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.CleverCSS'`` and converts them to css.
 
 You need to install Clever CSS using ``sudo easy_install CleverCSS`` command for this processor to work.
 
@@ -115,7 +123,7 @@ You need to install Clever CSS using ``sudo easy_install CleverCSS`` command for
 
 #### HSS Processor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.HSS'`` and converts them to css. 
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.HSS'`` and converts them to css.
 
 You need to download HSS from [the project website][hss] and set the ``HSS_PATH`` variable to the downloaded path. A version for OS X is installed in the ``lib`` folder by default. To use it, just uncomment the ``HSS_PATH`` line in the settings.py file of your template.
 
@@ -123,15 +131,15 @@ You need to download HSS from [the project website][hss] and set the ``HSS_PATH`
 
 #### SASS Processor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.SASS'`` and converts them to css. 
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.SASS'`` and converts them to css.
 
 You need to install SASS (see [the project website][sass]) and set the ``SASS_PATH`` variable to the path to the ``sass`` script.
 
-[sass]: http://sass-lang.com/   
+[sass]: http://sass-lang.com/
 
 #### Less CSS Processor
 
-Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.LessCSS'`` and converts them to css. 
+Runs through the all the files defined in the configuration associated with ``'hydeengine.media_processors.LessCSS'`` and converts them to css.
 
 You need to install Less (see [the project website][lesscss]) and set the ``LESS_CSS_PATH`` variable to the path to the ``lessc`` script.
 
@@ -146,6 +154,8 @@ You need to install the [Python Imaging Library][PIL] with the ``sudo easy_insta
 You also need to set the ``THUMBNAIL_MAX_WIDTH`` and ``THUMBNAIL_MAX_HEIGHT`` variables.
 
 You can set the ``THUMBNAIL_FILENAME_POSTFIX`` to change the string that is appended to the filename of thumbnails. By default this is ``-thumb`` (i.e. the thumbnail of ``my-image.png`` will be called ``my-image-thumb.png``).
+
+You can optionally set the ``THUMBNAIL_JPEG_QUALITY`` (between 0 and 100) to control the JPEG compression quality.
 
 [PIL]: http://www.pythonware.com/products/pil/
 
@@ -168,7 +178,7 @@ On your content pages you can define the page variables using the standard YAML 
 
     {%hyde
         title: A New Post
-        list: 
+        list:
             - One
             - Two
             - Three
@@ -196,7 +206,7 @@ It is used as follows:
 
     1.  Or at least that is my opinion.
     2.  What about you?
-    {% endmarkdown %}   
+    {% endmarkdown %}
 
 #### Markdown2
 
@@ -221,7 +231,7 @@ It is used as follows:
 
     # Or at least that is my opinion.
     # What about you?
-    
+
     {% endtextile %}
 
 
@@ -243,7 +253,7 @@ It is used as follows:
 
     #. Or at least that is my opinion.
     #. What about you?
-    
+
     {% endrestructuredtext %}
 
 The default reStructuredText settings may be changed by assigning a dictionary of setting names and values to the ``RST_SETTINGS_OVERRIDES`` setting in the settings file.  For information on the various configuration options, see the [docutils configuration documentation](http://docutils.sourceforge.net/docs/user/config.html).
@@ -327,20 +337,21 @@ Render Article renders the html content bracketed by the `{%article%}` tag from 
 
 ### Typogrify
 
-To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template.
+To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template. Some features require you to have [smartypants] installed.
 
 [typogrify_site]:http://code.google.com/p/typogrify/
+[smartypants]:http://web.chad.org/projects/smartypants.py/
 
 ## Base Templates
 
 There are two layouts currently available: default and simple.
 
-The default site layout contains templates for basic site structure, navigation, breadcrumbs, listing, posts and Atom feed and a very basic stylesheet. 
+The default site layout contains templates for basic site structure, navigation, breadcrumbs, listing, posts and Atom feed and a very basic stylesheet.
 
 
 # Examples
 
-The following websites are built using hyde and are open sourced. 
+The following websites are built using hyde and are open sourced.
 
 * [SteveLosh.com][stevelosh]
 * [The Old Ringce Website][ringce]
@@ -360,10 +371,10 @@ The following websites are built using hyde and are open sourced.
 - [Valentin Jacquemin](http://github.com/poxd)
 - [Johannes Reinhard](http://github.com/SpeckFleck)
 - [Steve Losh](http://github.com/sjl)
-- [William Amberg](http://github.com/wamberg)          
+- [William Amberg](http://github.com/wamberg)
 - [James Clarke](http://github.com/jc)
-- [Benjamin Pollack](http://github.com/bpollack)   
-- [Andrey](http://github.com/andrulik)   
+- [Benjamin Pollack](http://github.com/bpollack)
+- [Andrey](http://github.com/andrulik)
 - [Toby White](http://github.com/tow)
 - [Tim Freund](http://github.com/timfreund)
 - [Russell H](http://github.com/russellhaering)
