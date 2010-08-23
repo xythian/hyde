@@ -327,9 +327,10 @@ Render Article renders the html content bracketed by the `{%article%}` tag from 
 
 ### Typogrify
 
-To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template.
+To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template. Some features require you to have [smartypants] installed.
 
 [typogrify_site]:http://code.google.com/p/typogrify/
+[smartypants]:http://web.chad.org/projects/smartypants.py/
 
 ## Base Templates
 

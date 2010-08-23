@@ -258,8 +258,10 @@ class SiteNode(object):
         
     def find_node(self, folder):
         try:
+            #print 'FIND NODE', folder, self.site.nodemap.get(folder.path)
             return self.site.nodemap[folder.path]
         except KeyError:
+            #print 'FAILED FIND NODE', folder
             return None
         
     find_child = find_node    
