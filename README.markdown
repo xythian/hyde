@@ -147,6 +147,8 @@ You also need to set the ``THUMBNAIL_MAX_WIDTH`` and ``THUMBNAIL_MAX_HEIGHT`` va
 
 You can set the ``THUMBNAIL_FILENAME_POSTFIX`` to change the string that is appended to the filename of thumbnails. By default this is ``-thumb`` (i.e. the thumbnail of ``my-image.png`` will be called ``my-image-thumb.png``).
 
+You can optionally set the ``THUMBNAIL_JPEG_QUALITY`` (between 0 and 100) to control the JPEG compression quality.
+
 [PIL]: http://www.pythonware.com/products/pil/
 
 ### Content Processors
@@ -327,9 +329,10 @@ Render Article renders the html content bracketed by the `{%article%}` tag from 
 
 ### Typogrify
 
-To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template.
+To enable Typogrify, use ``{% filter typogrify %}`` in your code. Typogrify is "a collection of Django template filters that help prettify your web typography by preventing ugly quotes and widows", according to the [project web site][typogrify_site]. It is automatically enabled in the default template. Some features require you to have [smartypants] installed.
 
 [typogrify_site]:http://code.google.com/p/typogrify/
+[smartypants]:http://web.chad.org/projects/smartypants.py/
 
 ## Base Templates
 

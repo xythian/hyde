@@ -2,6 +2,7 @@
 Utility functions for dealing with urls. 
 
 """
+import sys
 
 def join(parent, child):
     """
@@ -19,6 +20,8 @@ def fixslash(url, relative=True):
     otherwise ensures it is not.
 
     """
+    if sys.platform == 'win32':
+        url = url.replace('\\', '/')
     url = url.strip("/")
     if relative:
         url = "/" + url
@@ -31,7 +34,6 @@ def clean_url(url):
     Removes .html from the url if it exists.
 
     """
-    
     parts = url.rsplit(".", 1)
     if parts[1] == "html":
         return parts[0]
