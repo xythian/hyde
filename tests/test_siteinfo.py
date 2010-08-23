@@ -371,6 +371,8 @@ class TestYAMLProcessor(MonitorTests):
                # YAMLContentProcessor.process(resource)
                for key, value in vars.iteritems():
                    assert hasattr(resource, key)
+                   print(value)
+                   print(getattr(resource, key))
                    assert getattr(resource, key) == value
            except:
                self.exception_queue.put(sys.exc_info())

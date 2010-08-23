@@ -154,6 +154,7 @@ class SyntaxHighlightNode(template.Node):
             from pygments import formatters
         except ImportError:
             print u"Requires Pygments library to use syntax highlighting tags."
+            raise
         
         output = self.nodelist.render(context)
         lexer = self.get_lexer(output)
