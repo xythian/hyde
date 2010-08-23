@@ -35,7 +35,7 @@ def excerpt(parser, token):
     return BracketNode("Excerpt", nodelist)
 
 @register.tag(name="article")
-def excerpt(parser, token):
+def article(parser, token):
     nodelist = parser.parse(('endarticle',))
     parser.delete_first_token()
     return BracketNode("Article", nodelist)
@@ -59,8 +59,6 @@ class LatestExcerptNode(template.Node):
 
     def render(self, context):
         sitemap_node = None
-        if not self.words == 50:
-            self.words = self.words.render(context)
         self.path = self.path.render(context).strip('"')
         sitemap_node = context["site"].find_node(Folder(self.path))
         if not sitemap_node:
@@ -149,7 +147,7 @@ def latest_excerpt(parser, token):
     if len(tokens) > 1:
         path = Template(tokens[1])
     if len(tokens) > 2:
-        words = Template(tokens[2])
+        words = int(tokens[2])
     return LatestExcerptNode(path, words)
 
 @register.tag(name="render_excerpt")
@@ -160,7 +158,7 @@ def render_excerpt(parser, token):
     if len(tokens) > 1:
         path = parser.compile_filter(tokens[1])
     if len(tokens) > 2:
-        words = Template(tokens[2])
+        words = int(tokens[2])
     return RenderExcerptNode(path, words)
 
 @register.tag(name="render_article")
@@ -177,8 +175,6 @@ class RenderExcerptNode(template.Node):
         self.words = words
 
     def render(self, context):
-        if not self.words == 50:
-            self.words = self.words.render(context)
         page = self.page.resolve(context)
         context["excerpt_url"] = page.url
         context["excerpt_title"] = page.title
