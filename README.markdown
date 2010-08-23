@@ -362,6 +362,8 @@ The following websites are built using hyde and are open sourced.
 
 # CONTRIBUTORS
 
+(Please let me know if I have missed someone here.)
+
 - [lakshmivyas](http://github.com/lakshmivyas)
 - [joshrosen](http://github.com/JoshRosen)
 - [Harry Lachenmayer](http://github.com/h3yl9r)
@@ -378,3 +380,9 @@ The following websites are built using hyde and are open sourced.
 - [Toby White](http://github.com/tow)
 - [Tim Freund](http://github.com/timfreund)
 - [Russell H](http://github.com/russellhaering)
+- [timo](http://github.com/timo)
+- [Alex Schworer](http://github.com/schworer)
+- [holmboe](http://github.com/holmboe)
+- [James Wilcox](http://github.com/snorp)
+- [Hugo Vincent](http://github.com/hugovincent)
+- [Örjan Persson](http://github.com/op)
