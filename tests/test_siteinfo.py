@@ -702,12 +702,17 @@ class TestPreProcessors:
         context = settings.CONTEXT
         site = context['site']
         self.generator.pre_process(site)
-        assert context['categories']
-        assert len(context['categories']) == 4
-        assert len(context['categories']['wishes'].posts) == 3
         blog_node = site.find_node(TEST_SITE.child_folder('content/blog'))
-        assert context['categories'] == blog_node.categories
+        assert hasattr(blog_node, 'categories')
+        assert len(blog_node.categories) == 4
+        found = False
+        for category in blog_node.categories:
+            if category['name'] == 'wishes':
+                found = True
+                assert len(category['posts']) == 3
 
+        if not found:
+            assert(False, "Category *wishes* not found")
 
 class TestPostProcessors:
 
