@@ -12,7 +12,7 @@ import codecs
 import fnmatch
 from datetime import datetime
 from distutils import dir_util, file_util
-from .path_util import PathUtil
+from path_util import PathUtil
 
 
 class FileSystemEntity(object):
