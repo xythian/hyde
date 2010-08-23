@@ -1,0 +1,16 @@
+{% extends "skeleton/_root.html" %}
+{% block all %}
+{%spaceless%}
+
+<div class="post">
+    <div class="post_title">
+        <a href="{{node.url}}">{{node.title}}</a>
+        <span class="post_date">{{node.created|date:"Y-m-d"}}</span>
+    </div>
+    <div class="post_content">
+        {% markdown %}
+        {% render_excerpt node %}
+        {% endmarkdown %}
+    </div>
+</div>
+{% endblock %}

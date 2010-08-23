@@ -360,11 +360,12 @@ class Generator(object):
             try:
                 subprocess.call([settings.GROWL, "-n", "Hyde", "-t", title, "-m", message])
             except:
-                pass
+                pass    
         elif hasattr(settings, "NOTIFY") and settings.NOTIFY and File(settings.NOTIFY).exists:
             try:
                 subprocess.call([settings.NOTIFY, "Hyde: " + title, message])
             except:
+                pass
 
     def pre_process(self, node):
         self.processor.pre_process(node)

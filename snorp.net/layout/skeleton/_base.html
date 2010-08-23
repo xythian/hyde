@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>snorp.net -- {{page.title}}</title>
+    {% block feeds %}
+    <link href="/blog/atom.xml" rel="alternate" title="{{site.name}}" type="application/atom+xml"/>
+    {% endblock %}
+    {% block css %}
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/media/css/base.css" type="text/css" media="screen">
+    {% block extra_css %}{% endblock %}{% endblock %}{% block js %}
+    <script src="http://www.google.com/jsapi"></script>
+    <script src="/media/js/base.js"></script>
+    {% block extra_js %}{% endblock %}{% endblock %}
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div id="main">
+        {% include "skeleton/_header.html" %}        
+        {% block content %}{% endblock %}
+        {% include "skeleton/_footer.html" %}
+    </div>
+</body>
+</html>
