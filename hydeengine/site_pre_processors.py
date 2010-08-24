@@ -114,12 +114,18 @@ class CategoriesManager:
 
             for category in categories:
                 name = urllib.quote_plus(category["name"])
-                posts = category["posts"]
                 archive_resource = "%s.html" % (name)
-                settings.CONTEXT.update({'category':category["name"],
-                                         'posts': posts,
-                                         'categories': categories})
-                output = render_to_string(template, settings.CONTEXT)
+                #: stubbing page object for use in template
+                page = {
+                    'module': node.module,
+                    'node': node,
+                    'title': relative_folder,
+                }
+                context.update({'category':category["name"],
+                                'posts': category["posts"],
+                                'categories': categories,
+                                'page': page})
+                output = render_to_string(template, context)
                 with codecs.open(os.path.join(output_folder, \
                                      archive_resource), \
                                      "w", "utf-8") as file:
