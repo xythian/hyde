@@ -4,6 +4,7 @@ setup(name='hyde',
       version='0.4',
       description='static site generator',
       packages=find_packages(),
+      scripts=("hyde.py",),
       install_requires=(
           'django',
           'pyYAML',
